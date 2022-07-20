@@ -4,78 +4,147 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center"
-    android:orientation="horizontal"
-    android:layout_marginTop="@dimen/padding"
-    android:weightSum="1">
+    android:layout_marginTop="@dimen/padding">
 
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/nameProductLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/infoProductLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/padding"
-        android:hint="@string/name_product"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/add_remove_linear_layout_compat"
+        android:paddingVertical="@dimen/padding_15"
+        android:background="@drawable/background_curve_category_quick_cases"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/titleProduct"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:paddingEnd="@dimen/padding"
-            android:drawableEnd="@drawable/icon_delete"
-            android:nextFocusDown="@+id/codeOrderEditText"
-            android:textAlignment="textStart"
-            android:textSize="@dimen/large_letter"
-            tools:text="Carton de huevos con arepa de queso y huevos" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/add_remove_linear_layout_compat"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_gravity="start"
-        android:background="@drawable/background_curve_category_quick_cases"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="@dimen/padding"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3">
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/remove_image_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/icon_reduce" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/count_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/nameProductLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_marginHorizontal="@dimen/padding"
-            android:gravity="center"
-            android:textSize="@dimen/xlarge_letter"
-            tools:text="1" />
+            android:hint="@string/name_product"
+            app:layout_constraintEnd_toStartOf="@+id/constraintLayout1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/constraintLayout1">
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/add_image_button"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/titleProduct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/icon_delete"
+                android:ellipsize="end"
+                android:nextFocusDown="@+id/codeOrderEditText"
+                android:paddingEnd="@dimen/padding"
+                android:textAlignment="textStart"
+                android:textSize="@dimen/large_letter"
+                tools:text="sobre de leches en oferta sobre de leches en oferta sobre de leches en oferta sobre de leches en oferta " />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/nameProductLayout"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/valueLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/valor"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/totalLayout"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/valueEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:nextFocusDown="@+id/totalEditText"
+                    android:textAlignment="center"
+                    tools:text="555" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/totalLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/total"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/valueLayout"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/totalEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:nextFocusDown="@+id/countEditText"
+                    android:textAlignment="center"
+                    tools:text="30000" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/add_remove_linear_layout_compat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/icon_add" />
+            android:layout_gravity="start"
+            android:layout_marginTop="@dimen/padding"
+            android:background="@drawable/background_curve_category_quick_cases"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/constraintLayout1"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout1">
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/remove_image_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/icon_reduce" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/count_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/padding"
+                android:gravity="center"
+                android:textSize="@dimen/xlarge_letter"
+                tools:text="1" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/add_image_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/icon_add" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,6 +3,7 @@
     <dimen name="large_padding_55">55dp</dimen>
     <dimen name="dimen_5">5dp</dimen>
     <dimen name="padding">10dp</dimen>
+    <dimen name="padding_15">15dp</dimen>
     <dimen name="xlarge_letter">25sp</dimen>
     <dimen name="large_letter">18sp</dimen>
 </resources>
