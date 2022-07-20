@@ -7,4 +7,5 @@
     <string name="total">Total</string>
     <string name="name_product">Que pidieron?</string>
     <string name="save">Agregar</string>
+    <string name="eliminar">Eliminar</string>
 </resources>
