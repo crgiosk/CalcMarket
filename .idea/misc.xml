@@ -5,7 +5,11 @@
       <map>
         <entry key="app/src/main/res/layout-v23/item_buy.xml" value="0.24270833333333333" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2947916666666667" />
+        <entry key="app/src/main/res/layout/fragment_all_buys.xml" value="0.22552083333333334" />
         <entry key="app/src/main/res/layout/item_buy.xml" value="0.40239969889322913" />
+        <entry key="app/src/main/res/layout/item_child_product.xml" value="0.3064971923828125" />
+        <entry key="app/src/main/res/layout/item_parent_product.xml" value="0.18020833333333333" />
+        <entry key="app/src/main/res/layout/item_product.xml" value="0.25610402425130213" />
         <entry key="app/src/main/res/layout/item_uy.xml" value="0.29375" />
       </map>
     </option>

@@ -5,7 +5,9 @@
     <string name="valor">Valor</string>
     <string name="page">Pagina</string>
     <string name="total">Total</string>
+    <string name="pagar">Pagar</string>
     <string name="name_product">Nombre del producto</string>
     <string name="save">Agregar</string>
     <string name="eliminar">Eliminar</string>
+    <string name="add_order">Añadir</string>
 </resources>

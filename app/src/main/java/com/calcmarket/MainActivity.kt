@@ -11,9 +11,8 @@ import com.calcmarket.core.Extensions
 import com.calcmarket.core.Extensions.hideKeyboard
 import com.calcmarket.core.Extensions.showKeyboard
 import com.calcmarket.databinding.ActivityMainBinding
-import com.calcmarket.ui.binds.BuyAdapter
+import com.calcmarket.ui.adapter.BuyAdapter
 import com.calcmarket.ui.binds.BuyBinding
-import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
 
@@ -49,10 +48,7 @@ class MainActivity : AppCompatActivity() {
                     if (count == "$" || count.isEmpty() || count.isBlank() || count == "" || count == "0") {
                         binding.totalEditText.setText("")
                     } else {
-                        binding.totalEditText.setText("")
-                        binding.totalEditText.setText(
-                            Extensions.buildCoinFormat(count.toInt() * itemValue.toInt())
-                        )
+                        calculateAndShowPrice()
                     }
                 }
                 binding.amountEditText.addTextChangedListener(this)
@@ -79,6 +75,12 @@ class MainActivity : AppCompatActivity() {
                     binding.valueEditText.setSelection(
                         binding.valueEditText.text.toString().length
                     )
+                    if (binding.amountEditText.text?.isNotEmpty() == true){
+                        calculateAndShowPrice()
+
+                    } else {
+                        binding.totalEditText.setText("")
+                    }
                 }
                 binding.valueEditText.addTextChangedListener(this)
             }
@@ -118,5 +120,15 @@ class MainActivity : AppCompatActivity() {
 
         binding.orderNameEditText.requestFocus()
         binding.orderNameEditText.showKeyboard()
+    }
+
+    private fun calculateAndShowPrice() {
+
+        val count = Extensions.removeCoinSymbol(binding.amountEditText.text.toString())
+        val itemValue = Extensions.removeCoinSymbol(binding.valueEditText.text.toString())
+        binding.totalEditText.setText("")
+        binding.totalEditText.setText(
+            Extensions.buildCoinFormat(count.toInt() * itemValue.toInt())
+        )
     }
 }
