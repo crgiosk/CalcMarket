@@ -10,4 +10,7 @@
     <string name="save">Agregar</string>
     <string name="eliminar">Eliminar</string>
     <string name="add_order">Añadir</string>
+    <string name="valor_unidad">Valor unidad:</string>
+    <string name="valor_total">Valor total:</string>
+    <string name="listado_compras">Tu listado de compras se vera reflejado en la parte de abajo</string>
 </resources>

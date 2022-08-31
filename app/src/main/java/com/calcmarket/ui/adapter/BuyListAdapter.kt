@@ -22,7 +22,7 @@ class BuyListAdapter: BaseExpandableListAdapter() {
 
     override fun isChildSelectable(groupPosition: Int, childPosition: Int): Boolean = false
 
-    override fun hasStableIds(): Boolean = false
+    override fun hasStableIds(): Boolean = true
 
     override fun getGroup(groupPosition: Int): BuyBinding = items[groupPosition]
 
@@ -41,8 +41,6 @@ class BuyListAdapter: BaseExpandableListAdapter() {
         return view.root
     }
 
-
-
     override fun getChildrenCount(groupPosition: Int): Int = getGroup(groupPosition).items.count()
 
     override fun getChild(groupPosition: Int, childPosition: Int): ProductBinding =
@@ -56,8 +54,8 @@ class BuyListAdapter: BaseExpandableListAdapter() {
         val view = ItemChildProductBinding.inflate(LayoutInflater.from(parent?.context))
         view.countProduct.text = product.amount.toString()
         view.nameProduct.text = product.name
-        view.textViewValueUnit.text = Extensions.buildCoinFormat(product.costItem)
-        view.textViewValueTotal.text = Extensions.buildCoinFormat(product.total)
+        view.valueUnit.text = Extensions.buildCoinFormat(product.costItem)
+        view.valueTotal.text = Extensions.buildCoinFormat(product.total)
 
         return view.root
     }

@@ -10,83 +10,95 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/background_curve_light"
-
-        android:layout_marginTop="@dimen/padding"
-        android:padding="@dimen/dimen_5"
+        android:paddingHorizontal="@dimen/padding_20"
+        android:paddingTop="@dimen/padding_15"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/nameProduct"
-            android:layout_width="0dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/infoProductLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:layout_marginStart="@dimen/padding"
+            android:background="@drawable/background_curve_light"
+            android:padding="@dimen/padding"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/countProduct"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Arroz" />
-
-        <TextView
-            android:id="@+id/countProduct"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/nameProduct"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/nameProduct"
-            tools:text="2" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/textViewValueUnit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/padding"
-            android:text="Valor unidad: "
-            app:layout_constraintStart_toStartOf="@+id/countProduct"
-            app:layout_constraintTop_toBottomOf="@+id/countProduct" />
+            <TextView
+                android:id="@+id/nameProduct"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/padding"
+                android:ellipsize="end"
+                android:maxLines="1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/countProduct"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Arroz" />
 
-        <TextView
-            android:id="@+id/valueUnit"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/dimen_5"
-            android:ellipsize="end"
-            android:maxLines="1"
-            app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintStart_toEndOf="@+id/textViewValueUnit"
-            app:layout_constraintTop_toTopOf="@+id/textViewValueUnit"
-            tools:text="$9999989878768769876987867869876" />
+            <TextView
+                android:id="@+id/countProduct"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/nameProduct"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/nameProduct"
+                tools:text="2" />
 
-        <TextView
-            android:id="@+id/textViewValueTotal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dimen_5"
-            android:layout_marginTop="@dimen/padding"
-            android:text="Valor unidad: "
-            app:layout_constraintStart_toEndOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/nameProduct" />
+            <TextView
+                android:id="@+id/textViewValueUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding"
+                android:text="@string/valor_unidad"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/countProduct" />
 
-        <TextView
-            android:id="@+id/valueTotal"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textViewValueTotal"
-            app:layout_constraintTop_toTopOf="@+id/textViewValueTotal"
-            tools:text="$999999999999999" />
+            <TextView
+                android:id="@+id/valueUnit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dimen_5"
+                android:layout_marginEnd="@dimen/dimen_5"
+                android:ellipsize="end"
+                android:maxLines="1"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintStart_toEndOf="@+id/textViewValueUnit"
+                app:layout_constraintTop_toTopOf="@+id/textViewValueUnit"
+                tools:text="$9999989878768769876987867869876" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
+            <TextView
+                android:id="@+id/textViewValueTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dimen_5"
+                android:layout_marginTop="@dimen/padding"
+                android:text="@string/valor_total"
+                app:layout_constraintStart_toEndOf="@+id/guideline2"
+                app:layout_constraintTop_toBottomOf="@+id/nameProduct" />
+
+            <TextView
+                android:id="@+id/valueTotal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dimen_5"
+                android:ellipsize="end"
+                android:maxLines="1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textViewValueTotal"
+                app:layout_constraintTop_toTopOf="@+id/textViewValueTotal"
+                tools:text="$999999999999999" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

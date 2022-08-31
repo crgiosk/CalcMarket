@@ -15,6 +15,7 @@ data class ProductBinding(
         name = name,
         costItem = costItem,
         amount = amount,
+        total = total,
         buyId = idBuy
     )
 }

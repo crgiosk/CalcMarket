@@ -4,6 +4,7 @@
     <dimen name="dimen_5">5dp</dimen>
     <dimen name="padding">10dp</dimen>
     <dimen name="padding_15">15dp</dimen>
+    <dimen name="padding_20">20dp</dimen>
     <dimen name="large_letter">18sp</dimen>
     <dimen name="xlarge_letter">25sp</dimen>
     <dimen name="edit_text_width">110dp</dimen>

@@ -40,7 +40,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="text"
                     android:maxLines="1"
-                    android:nextFocusDown="@+id/amountEditText" />
+                    android:nextFocusDown="@+id/valueEditText" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -102,7 +102,7 @@
                         android:layout_height="wrap_content"
                         android:inputType="number"
                         android:maxLines="1"
-                        android:nextFocusDown="@+id/totalEditText"
+                        android:nextFocusDown="@+id/amountEditText"
                         android:textAlignment="center"
                         tools:text="$55.555" />
 
@@ -192,7 +192,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/pagar"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"

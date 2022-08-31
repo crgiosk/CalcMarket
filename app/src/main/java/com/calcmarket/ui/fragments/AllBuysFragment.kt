@@ -43,11 +43,10 @@ class AllBuysFragment : Fragment() {
     }
 
     private fun setupUi() {
-        binding.buyExpandableList.apply {
-            setHasTransientState(true)
-            setAdapter(buyAdapter)
-            setGroupIndicator(null)
-        }
+        binding.buyExpandableList.setHasTransientState(true)
+        binding.buyExpandableList.setAdapter(buyAdapter)
+        binding.buyExpandableList.divider = null
+        binding.buyExpandableList.setGroupIndicator(null)
     }
 
     override fun onStart() {

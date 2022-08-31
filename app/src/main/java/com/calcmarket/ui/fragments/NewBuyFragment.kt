@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,6 +26,7 @@ class NewBuyFragment : Fragment() {
     private val buyAdapter: BuyAdapter by lazy {
         BuyAdapter {
             binding.totalBuy.text = Extensions.buildCoinFormat(it)
+            binding.buttonSaveBuy.visibility = if ( it > 0) View.VISIBLE else View.GONE
         }
     }
     private val viewModel: BuysViewModel by activityViewModels()
@@ -110,34 +112,45 @@ class NewBuyFragment : Fragment() {
         })
 
         binding.addProduct.setOnClickListener { button ->
-            val touchables = binding.formInputs.touchables.filterIsInstance<EditText>()
-            if (touchables.none { it.text.isEmpty() }) {
-                val total = Extensions.removeCoinSymbol(binding.totalEditText.text.toString()).toInt()
-                val value = Extensions.removeCoinSymbol(binding.valueEditText.text.toString()).toInt()
-                buyAdapter.addItem(
-                    ProductBinding(
-                        id = buyAdapter.itemCount + 1,
-                        name = binding.orderNameEditText.text?.toString() ?: String(),
-                        amount = binding.amountEditText.text?.toString()?.toInt() ?: 0,
-                        total = total,
-                        costItem = value,
-                    )
-                )
-                button.hideKeyboard()
-                binding.formInputs.touchables.filterIsInstance<EditText>().forEach { editText ->
-                    editText.setText("")
-                }
-                binding.recyclerViewOrders.smoothScrollToPosition(buyAdapter.itemCount)
-                binding.orderNameEditText.requestFocus()
-            } else {
-                touchables.filter { it.text.toString().isEmpty() }.forEach {
-                    it.error = "Rellenar esta opcion."
-                }
-            }
+            addProduct(button)
         }
 
         binding.buttonSaveBuy.setOnClickListener {
             viewModel.saveBuy(buyAdapter.getData())
+        }
+
+        binding.amountEditText.setOnEditorActionListener { textView, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                addProduct(textView)
+            }
+            false
+        }
+    }
+
+    private fun addProduct(button: View) {
+        val editTexts = binding.formInputs.touchables.filterIsInstance<EditText>()
+        if (editTexts.none { it.text.isEmpty() }) {
+            val total = Extensions.removeCoinSymbol(binding.totalEditText.text.toString()).toInt()
+            val value = Extensions.removeCoinSymbol(binding.valueEditText.text.toString()).toInt()
+            buyAdapter.addItem(
+                ProductBinding(
+                    id = buyAdapter.itemCount + 1,
+                    name = binding.orderNameEditText.text?.toString() ?: String(),
+                    amount = binding.amountEditText.text?.toString()?.toInt() ?: 0,
+                    total = total,
+                    costItem = value,
+                )
+            )
+            //button.hideKeyboard()
+            binding.formInputs.touchables.filterIsInstance<EditText>().forEach { editText ->
+                editText.setText("")
+            }
+            binding.recyclerViewOrders.smoothScrollToPosition(buyAdapter.itemCount)
+            binding.orderNameEditText.requestFocus()
+        } else {
+            editTexts.filter { it.text.toString().isEmpty() }.forEach {
+                it.error = "Rellenar esta opcion."
+            }
         }
     }
 
