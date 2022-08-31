@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/buy_nav"
+    app:startDestination="@id/allBuysFragment">
+
+    <fragment
+        android:id="@+id/allBuysFragment"
+        android:name="com.calcmarket.ui.fragments.AllBuysFragment"
+        android:label="AllBuysFragment" >
+        <action
+            android:id="@+id/action_allBuysFragment_to_newBuyFragment"
+            app:destination="@id/newBuyFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/newBuyFragment"
+        android:name="com.calcmarket.ui.fragments.NewBuyFragment"
+        android:label="NewBuyFragment" />
+</navigation>

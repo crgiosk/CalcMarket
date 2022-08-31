@@ -6,21 +6,23 @@ import androidx.recyclerview.widget.RecyclerView
 import com.calcmarket.core.Extensions
 import com.calcmarket.core.Extensions.basicDiffUtil
 import com.calcmarket.databinding.ItemProductBinding
-import com.calcmarket.ui.binds.BuyBinding
+import com.calcmarket.ui.binds.ProductBinding
 
 class BuyAdapter(
     val onChangeTotal: (Int) -> Unit
 ) : RecyclerView.Adapter<BuyAdapter.ViewHolder>() {
 
-    private var items: MutableList<BuyBinding> by basicDiffUtil(
+    private var items: MutableList<ProductBinding> by basicDiffUtil(
         areContentsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
         areItemsTheSame = { old, new -> old == new }
     )
 
-    fun addItem(item: BuyBinding) {
+    fun addItem(item: ProductBinding) {
         items.add(item)
         onChangeTotal(getTotalBuy())
     }
+
+    fun getData() = items
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = ViewHolder(
         ItemProductBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -36,7 +38,7 @@ class BuyAdapter(
 
     inner class ViewHolder(private val binding: ItemProductBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bindItem(model: BuyBinding) {
+        fun bindItem(model: ProductBinding) {
 
             binding.nameProduct.setText(model.name)
             binding.amountEditText.text = model.amount.toString()
