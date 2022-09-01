@@ -17,6 +17,7 @@ import com.calcmarket.core.Extensions.hideKeyboard
 import com.calcmarket.core.Extensions.showKeyboard
 import com.calcmarket.databinding.FragmentNewBuyBinding
 import com.calcmarket.ui.adapter.BuyAdapter
+import com.calcmarket.ui.adapter.ProductAutoCompleteAdapter
 import com.calcmarket.ui.binds.ProductBinding
 import com.calcmarket.viewmodels.BuysViewModel
 
@@ -26,9 +27,20 @@ class NewBuyFragment : Fragment() {
     private val buyAdapter: BuyAdapter by lazy {
         BuyAdapter {
             binding.totalBuy.text = Extensions.buildCoinFormat(it)
-            binding.buttonSaveBuy.visibility = if ( it > 0) View.VISIBLE else View.GONE
+            binding.buttonSaveBuy.visibility = if (it > 0) View.VISIBLE else View.GONE
         }
     }
+
+    private val autoCompleteAdapter: ProductAutoCompleteAdapter by lazy {
+        ProductAutoCompleteAdapter {
+
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
     private val viewModel: BuysViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -48,10 +60,18 @@ class NewBuyFragment : Fragment() {
         }
 
 
+        binding.nameProduct.setAdapter(autoCompleteAdapter)
         setupListeners()
+        setupObservers()
 
-        binding.orderNameEditText.requestFocus()
-        binding.orderNameEditText.showKeyboard()
+        binding.nameProduct.requestFocus()
+        binding.nameProduct.showKeyboard()
+    }
+
+    private fun setupObservers() {
+        viewModel.nameProductsLiveData().observe(viewLifecycleOwner) {
+            autoCompleteAdapter.updateItems(it)
+        }
     }
 
     private fun setupListeners() {
@@ -112,7 +132,7 @@ class NewBuyFragment : Fragment() {
         })
 
         binding.addProduct.setOnClickListener { button ->
-            addProduct(button)
+            addProduct()
         }
 
         binding.buttonSaveBuy.setOnClickListener {
@@ -121,13 +141,33 @@ class NewBuyFragment : Fragment() {
 
         binding.amountEditText.setOnEditorActionListener { textView, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                addProduct(textView)
+                addProduct()
             }
             false
         }
+
+        binding.nameProduct.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                if (p0?.isNotEmpty() == true){
+                    viewModel.getProductByQuery(p0.toString())
+                }
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+            }
+        })
+
+        binding.nameProduct.setOnItemClickListener { parent, _, position, _ ->
+            binding.nameProduct.setText((parent.getItemAtPosition(position) as String))
+            binding.nameProduct.setSelection(binding.nameProduct.text.length)
+            binding.valueEditText.requestFocus()
+        }
     }
 
-    private fun addProduct(button: View) {
+    private fun addProduct() {
         val editTexts = binding.formInputs.touchables.filterIsInstance<EditText>()
         if (editTexts.none { it.text.isEmpty() }) {
             val total = Extensions.removeCoinSymbol(binding.totalEditText.text.toString()).toInt()
@@ -135,18 +175,17 @@ class NewBuyFragment : Fragment() {
             buyAdapter.addItem(
                 ProductBinding(
                     id = buyAdapter.itemCount + 1,
-                    name = binding.orderNameEditText.text?.toString() ?: String(),
+                    name = binding.nameProduct.text?.toString() ?: String(),
                     amount = binding.amountEditText.text?.toString()?.toInt() ?: 0,
                     total = total,
                     costItem = value,
                 )
             )
-            //button.hideKeyboard()
             binding.formInputs.touchables.filterIsInstance<EditText>().forEach { editText ->
                 editText.setText("")
             }
             binding.recyclerViewOrders.smoothScrollToPosition(buyAdapter.itemCount)
-            binding.orderNameEditText.requestFocus()
+            binding.nameProduct.requestFocus()
         } else {
             editTexts.filter { it.text.toString().isEmpty() }.forEach {
                 it.error = "Rellenar esta opcion."

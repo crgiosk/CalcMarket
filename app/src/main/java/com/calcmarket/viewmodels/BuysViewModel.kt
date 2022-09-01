@@ -23,8 +23,10 @@ class BuysViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val fullBuysMutableLiveData = MutableLiveData<List<BuyBinding>>()
+    private val nameProductsMutableLiveData = MutableLiveData<List<String>>()
 
     fun fullBuysLiveData(): LiveData<List<BuyBinding>> = fullBuysMutableLiveData
+    fun nameProductsLiveData(): LiveData<List<String>> = nameProductsMutableLiveData
 
     fun saveBuy(items: MutableList<ProductBinding>) {
 
@@ -52,6 +54,14 @@ class BuysViewModel @Inject constructor(
                 fullBuysMutableLiveData.postValue(
                     buysList.map { it.toBinding() }
                 )
+            }
+        }
+    }
+
+    fun getProductByQuery(query: String) {
+        viewModelScope.launch {
+            buyUseCase.getProductByQuery(query).collect {
+                nameProductsMutableLiveData.postValue(it)
             }
         }
     }

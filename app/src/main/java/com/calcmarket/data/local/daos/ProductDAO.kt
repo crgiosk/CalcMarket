@@ -15,8 +15,10 @@ interface ProductDAO {
     @Insert
     fun saveProduct(buyEntity: List<ProductEntity>)
 
-    @Query("SELECT * FROM product")
-    fun getAllBuys(): Flow<ProductEntity>
+    //crear nuevo dao para dar manejo a solo los productos y asi poder validar la existencia de uno
+    //y no tener redundancia de datos
+    @Query("SELECT product_name FROM product WHERE product_name LIKE '%' || :queryString || '%' ")
+    fun getNameProducts(queryString: String): Flow<List<String>>
 
     @Transaction
     @Query("SELECT * FROM product WHERE fk_buy_id = :idBuy")

@@ -16,4 +16,6 @@ class BuyUseCase @Inject constructor(
     ) = repository.saveLocalBuy(buyEntity, productEntity)
 
     fun getFullBuys() = repository.getFullBuys()
+
+    fun getProductByQuery(query: String) = repository.getProductByQuery(query)
 }

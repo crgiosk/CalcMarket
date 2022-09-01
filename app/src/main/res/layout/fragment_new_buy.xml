@@ -23,26 +23,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/nameProductLayout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
+
+            <com.calcmarket.ui.binds.CustomAutoComplete
+                android:id="@+id/nameProduct"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:ems="10"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center|start"
                 android:hint="@string/name_product"
+                android:inputType="textVisiblePassword"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/orderNameEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    android:nextFocusDown="@+id/valueEditText" />
-
-            </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout1"
@@ -52,7 +48,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/nameProductLayout">
+                app:layout_constraintTop_toBottomOf="@+id/nameProduct">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/amountLayout"

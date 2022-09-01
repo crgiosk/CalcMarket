@@ -20,4 +20,6 @@ class BuyRepository @Inject constructor(
     }
 
     fun getFullBuys() = buyDAO.getFullBuys()
+
+    fun getProductByQuery(query: String) = productDAO.getNameProducts(query)
 }

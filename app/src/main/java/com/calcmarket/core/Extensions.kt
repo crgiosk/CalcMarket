@@ -1,5 +1,6 @@
 package com.calcmarket.core
 
+import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -16,9 +17,13 @@ object Extensions  {
         inputMethodManager.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
     }
 
-    fun View.hideKeyboard() {
-        val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
+    fun Activity.hideKeyboard() {
+        val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        if (imm.isAcceptingText) {
+            this.currentFocus?.let {
+                imm.hideSoftInputFromWindow(it.windowToken, 0)
+            }
+        }
     }
 
     fun buildCoinFormat(number: Int): String {
