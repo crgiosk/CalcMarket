@@ -1,9 +1,11 @@
-package com.calcmarket.data.local
+package com.calcmarket.data.local.repository
 
 import com.calcmarket.data.local.daos.BuyDAO
 import com.calcmarket.data.local.daos.ProductDAO
 import com.calcmarket.data.local.entities.BuyEntity
+import com.calcmarket.data.local.entities.FullBuyEntity
 import com.calcmarket.data.local.entities.ProductEntity
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class BuyRepository @Inject constructor(
@@ -13,13 +15,14 @@ class BuyRepository @Inject constructor(
 
     fun saveLocalBuy(
         buyEntity: BuyEntity,
-        productEntity: List<ProductEntity>
+        productEntity: List<Int>
     ) {
         buyDAO.saveBuy(buyEntity)
-        productDAO.saveProduct(productEntity)
+        //TODO!! buyDAO.saveProductByBuy()
+        //TODO!! save buyProducts with itemsIdList
     }
 
-    fun getFullBuys() = buyDAO.getFullBuys()
+    fun getFullBuys(): Flow<List<FullBuyEntity>> = buyDAO.getFullBuys()
 
-    fun getProductByQuery(query: String) = productDAO.getNameProducts(query)
+    //fun getProductByQuery(query: String): Flow<List<String>> = productDAO.getNameProducts(query)
 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.calcmarket.data.local.entities.BuyEntity
 import com.calcmarket.data.usecase.BuyUseCase
+import com.calcmarket.data.usecase.ProductUseCase
 import com.calcmarket.ui.binds.BuyBinding
 import com.calcmarket.ui.binds.ProductBinding
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,11 +16,11 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import javax.inject.Inject
-import kotlin.coroutines.coroutineContext
 
 @HiltViewModel
 class BuysViewModel @Inject constructor(
-    private val buyUseCase: BuyUseCase
+    private val buyUseCase: BuyUseCase,
+    private val productUseCase: ProductUseCase
 ) : ViewModel() {
 
     private val fullBuysMutableLiveData = MutableLiveData<List<BuyBinding>>()
@@ -42,10 +43,14 @@ class BuysViewModel @Inject constructor(
                     countItems = items.count(),
                     total = items.sumOf { it.total }
                 ),
-                items.map { it.toEntity(idBuy) }
+                items.map { it.id }
             )
         }
 
+    }
+    fun saveProduct(productBinding: ProductBinding){
+        //TODO!! remove idBuy
+        productUseCase.saveProduct(productBinding.toEntity(1))
     }
 
     fun getFullBuys() {
@@ -60,7 +65,7 @@ class BuysViewModel @Inject constructor(
 
     fun getProductByQuery(query: String) {
         viewModelScope.launch {
-            buyUseCase.getProductByQuery(query).collect {
+            productUseCase.getProductByQuery(query).collect {
                 nameProductsMutableLiveData.postValue(it)
             }
         }

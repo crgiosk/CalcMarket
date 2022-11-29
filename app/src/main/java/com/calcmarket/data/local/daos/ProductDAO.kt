@@ -13,10 +13,7 @@ import kotlinx.coroutines.flow.Flow
 interface ProductDAO {
 
     @Insert
-    fun saveProduct(buyEntity: List<ProductEntity>)
-
-    //crear nuevo dao para dar manejo a solo los productos y asi poder validar la existencia de uno
-    //y no tener redundancia de datos
+    fun saveProduct(buyEntity: ProductEntity)
     @Query("SELECT product_name FROM product WHERE product_name LIKE '%' || :queryString || '%' ")
     fun getNameProducts(queryString: String): Flow<List<String>>
 
