@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.calcmarket.data.local.daos.ProductBuyDAO
 import com.calcmarket.data.local.entities.BuyEntity
 import com.calcmarket.data.usecase.BuyUseCase
-import com.calcmarket.data.usecase.ProductUseCase
 import com.calcmarket.ui.binds.BuyBinding
 import com.calcmarket.ui.binds.ProductBinding
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,14 +20,12 @@ import javax.inject.Inject
 @HiltViewModel
 class BuysViewModel @Inject constructor(
     private val buyUseCase: BuyUseCase,
-    private val productUseCase: ProductUseCase
+    private val productBuyDAO: ProductBuyDAO
 ) : ViewModel() {
 
     private val fullBuysMutableLiveData = MutableLiveData<List<BuyBinding>>()
-    private val nameProductsMutableLiveData = MutableLiveData<List<String>>()
 
     fun fullBuysLiveData(): LiveData<List<BuyBinding>> = fullBuysMutableLiveData
-    fun nameProductsLiveData(): LiveData<List<String>> = nameProductsMutableLiveData
 
     fun saveBuy(items: MutableList<ProductBinding>) {
 
@@ -48,10 +46,6 @@ class BuysViewModel @Inject constructor(
         }
 
     }
-    fun saveProduct(productBinding: ProductBinding){
-        //TODO!! remove idBuy
-        productUseCase.saveProduct(productBinding.toEntity(1))
-    }
 
     fun getFullBuys() {
         viewModelScope.launch {
@@ -59,14 +53,6 @@ class BuysViewModel @Inject constructor(
                 fullBuysMutableLiveData.postValue(
                     buysList.map { it.toBinding() }
                 )
-            }
-        }
-    }
-
-    fun getProductByQuery(query: String) {
-        viewModelScope.launch {
-            productUseCase.getProductByQuery(query).collect {
-                nameProductsMutableLiveData.postValue(it)
             }
         }
     }

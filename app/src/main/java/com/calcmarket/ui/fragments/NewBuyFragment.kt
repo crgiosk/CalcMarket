@@ -13,15 +13,19 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.calcmarket.core.Extensions
-import com.calcmarket.core.Extensions.hideKeyboard
 import com.calcmarket.core.Extensions.showKeyboard
 import com.calcmarket.databinding.FragmentNewBuyBinding
 import com.calcmarket.ui.adapter.BuyAdapter
 import com.calcmarket.ui.adapter.ProductAutoCompleteAdapter
 import com.calcmarket.ui.binds.ProductBinding
 import com.calcmarket.viewmodels.BuysViewModel
+import com.calcmarket.viewmodels.ProductViewModel
 
 class NewBuyFragment : Fragment() {
+
+
+    private val viewModel: BuysViewModel by activityViewModels()
+    private val productViewModel: ProductViewModel by activityViewModels()
 
     private lateinit var binding: FragmentNewBuyBinding
     private val buyAdapter: BuyAdapter by lazy {
@@ -40,8 +44,6 @@ class NewBuyFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
-
-    private val viewModel: BuysViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -69,7 +71,7 @@ class NewBuyFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        viewModel.nameProductsLiveData().observe(viewLifecycleOwner) {
+        productViewModel.nameProductsLiveData().observe(viewLifecycleOwner) {
             autoCompleteAdapter.updateItems(it)
         }
     }
@@ -152,7 +154,7 @@ class NewBuyFragment : Fragment() {
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 if (p0?.isNotEmpty() == true){
-                    viewModel.getProductByQuery(p0.toString())
+                    productViewModel.getProductByQuery(p0.toString())
                 }
             }
 

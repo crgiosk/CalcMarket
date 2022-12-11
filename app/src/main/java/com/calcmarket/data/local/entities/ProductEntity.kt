@@ -11,9 +11,8 @@ import com.calcmarket.ui.binds.ProductBinding
     indices = [ Index(value = [ProductEntity.FK_BUY_ID], unique = false)]
 )
 data class ProductEntity(
-    //la primary key, sera la fecha en milis
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "product_id")
+    @ColumnInfo(name = PRODUCT_ID)
     val id: Int,
 
     @ColumnInfo(name = "product_name")
@@ -42,5 +41,6 @@ data class ProductEntity(
 
     companion object {
         const val FK_BUY_ID = "fk_${BuyEntity.BUY_ID}"
+        const val PRODUCT_ID = "product_id"
     }
 }
