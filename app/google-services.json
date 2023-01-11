@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "293478930997",
+    "project_id": "calckmarket",
+    "storage_bucket": "calckmarket.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:293478930997:android:a0df2762e4da1fb461af7c",
+        "android_client_info": {
+          "package_name": "com.calcmarket"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "293478930997-gt3b9nutlt1d0bt0j5cg1b25vgbv8dtq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.calcmarket",
+            "certificate_hash": "137b8ea7b0ae583734ffe1d356f681bc6c21eb85"
+          }
+        },
+        {
+          "client_id": "293478930997-shkbfi9ejco51a87ddb6bjbd25l79keu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsQETLrQQnGsGylglsl3cb7R_dH2UoDFo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "293478930997-shkbfi9ejco51a87ddb6bjbd25l79keu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
