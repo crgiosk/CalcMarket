@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface ProductDAO {
 
     @Insert
-    fun saveProduct(buyEntity: ProductEntity)
+    fun saveProduct(buyEntity: ProductEntity): Long
 
     @Query("SELECT product_name FROM product WHERE product_name LIKE '%' || :queryString || '%' ")
     fun getNameProducts(queryString: String): Flow<List<String>>

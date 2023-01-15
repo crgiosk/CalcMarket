@@ -174,15 +174,25 @@ class NewBuyFragment : Fragment() {
         if (editTexts.none { it.text.isEmpty() }) {
             val total = Extensions.removeCoinSymbol(binding.totalEditText.text.toString()).toInt()
             val value = Extensions.removeCoinSymbol(binding.valueEditText.text.toString()).toInt()
-            buyAdapter.addItem(
-                ProductBinding(
-                    id = buyAdapter.itemCount + 1,
-                    name = binding.nameProduct.text?.toString() ?: String(),
-                    amount = binding.amountEditText.text?.toString()?.toInt() ?: 0,
-                    total = total,
-                    costItem = value,
+            if (productViewModel.currentProduct.id == 0) {
+                productViewModel.currentProduct = ProductBinding(
+                        name = binding.nameProduct.text?.toString() ?: String(),
+                        amount = binding.amountEditText.text?.toString()?.toInt() ?: 0,
+                        total = total,
+                        costItem = value,
                 )
-            )
+                productViewModel.saveProduct {
+                    activity?.runOnUiThread {
+                        buyAdapter.addItem(
+                            productViewModel.currentProduct
+                        )
+                    }
+                }
+            } else {
+                buyAdapter.addItem(
+                    productViewModel.currentProduct
+                )
+            }
             binding.formInputs.touchables.filterIsInstance<EditText>().forEach { editText ->
                 editText.setText("")
             }
