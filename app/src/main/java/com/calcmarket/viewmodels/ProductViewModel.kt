@@ -3,14 +3,12 @@ package com.calcmarket.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.calcmarket.data.local.entities.ProductEntity
 import com.calcmarket.data.usecase.ProductUseCase
 import com.calcmarket.ui.binds.ProductBinding
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,9 +16,9 @@ import javax.inject.Inject
 class ProductViewModel @Inject constructor(private val productUseCase: ProductUseCase) : ViewModel() {
 
     var currentProduct = ProductBinding()
-    private val nameProductsMutableLiveData = MutableLiveData<List<String>>()
+    private val nameProductsMutableLiveData = MutableLiveData<List<ProductBinding>>()
 
-    fun nameProductsLiveData(): LiveData<List<String>> = nameProductsMutableLiveData
+    fun nameProductsLiveData(): LiveData<List<ProductBinding>> = nameProductsMutableLiveData
 
     fun saveProduct(onSave: (() -> Unit)? = null) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -35,8 +33,10 @@ class ProductViewModel @Inject constructor(private val productUseCase: ProductUs
 
     fun getProductByQuery(query: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            productUseCase.getProductByQuery(query).collect {
-                nameProductsMutableLiveData.postValue(it)
+            productUseCase.getProductByQuery(query).collect { items ->
+                nameProductsMutableLiveData.postValue(
+                    items.map { it.toBinding() }
+                )
             }
         }
     }

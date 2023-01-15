@@ -7,6 +7,7 @@ import android.widget.BaseAdapter
 import android.widget.Filter
 import android.widget.Filterable
 import com.calcmarket.databinding.LayoutAutoCompleteProductBinding
+import com.calcmarket.ui.binds.ProductBinding
 import java.util.Locale
 import kotlin.collections.ArrayList
 
@@ -14,10 +15,10 @@ class ProductAutoCompleteAdapter(
     val clickClosure: () -> Unit
 ) : BaseAdapter(), Filterable {
 
-    private var items: MutableList<String> = mutableListOf()
+    private var items: MutableList<ProductBinding> = mutableListOf()
     private val filter = AutoCompleteFilter()
 
-    fun updateItems(list: List<String>) {
+    fun updateItems(list: List<ProductBinding>) {
         items.clear()
         items.addAll(list)
         notifyDataSetChanged()
@@ -25,7 +26,7 @@ class ProductAutoCompleteAdapter(
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view = LayoutAutoCompleteProductBinding.inflate(LayoutInflater.from(parent?.context), parent, false)
-        view.nameProduct.text = items[position]
+        view.nameProduct.text = items[position].name
         return view.root
     }
 
@@ -50,10 +51,10 @@ class ProductAutoCompleteAdapter(
                 filterResult.values = items
                 filterResult.count = items.count()
             } else {
-                val newValues = ArrayList<String>()
+                val newValues = ArrayList<ProductBinding>()
                 for (item in items) {
                     if (
-                        item.lowercase(Locale.ROOT)
+                        item.name.lowercase(Locale.ROOT)
                             .contains(constraint.toString().lowercase(Locale.ROOT))
                     ) {
                         newValues.add(item)
@@ -70,7 +71,7 @@ class ProductAutoCompleteAdapter(
         override fun publishResults(constraint: CharSequence?, result: FilterResults?) {
             items.clear()
             result?.let {
-                items.addAll(it.values as ArrayList<String>)
+                items.addAll(it.values as ArrayList<ProductBinding>)
                 if (items.isEmpty()) {
                     clickClosure()
                     notifyDataSetInvalidated()

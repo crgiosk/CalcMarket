@@ -7,24 +7,24 @@ import com.calcmarket.ui.binds.ProductBinding
 
 @Entity(tableName = ProductEntity.NAME_TABLE)
 data class ProductEntity(
-        @PrimaryKey(autoGenerate = true)
-        @ColumnInfo(name = PRODUCT_ID)
-        val id: Int = 0,
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = PRODUCT_ID)
+    val id: Int = 0,
 
-        @ColumnInfo(name = "${NAME_TABLE}_name")
-        val name: String = "",
+    @ColumnInfo(name = "${NAME_TABLE}_name")
+    val name: String = "",
 
-        @ColumnInfo(name = "${NAME_TABLE}_cost")
-        val costProduct: Int = 0,
+    @ColumnInfo(name = "${NAME_TABLE}_cost")
+    val costProduct: Int = 0,
 
-        @ColumnInfo(name = "${NAME_TABLE}_favorite")
-        val isFavorite: Boolean = false
+    @ColumnInfo(name = "${NAME_TABLE}_favorite")
+    val isFavorite: Boolean = false
 
 ) {
     fun toBinding() = ProductBinding(
-            id = id,
-            name = name,
-            costItem = costProduct
+        id = id,
+        name = name,
+        costItem = costProduct
     )
 
     companion object {

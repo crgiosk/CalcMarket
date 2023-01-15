@@ -12,7 +12,7 @@ interface ProductDAO {
     @Insert
     fun saveProduct(buyEntity: ProductEntity): Long
 
-    @Query("SELECT product_name FROM product WHERE product_name LIKE '%' || :queryString || '%' ")
-    fun getNameProducts(queryString: String): Flow<List<String>>
+    @Query("SELECT * FROM product WHERE product_name LIKE '%' || :queryString || '%' ")
+    fun getProductsByName(queryString: String): Flow<List<ProductEntity>>
 
 }

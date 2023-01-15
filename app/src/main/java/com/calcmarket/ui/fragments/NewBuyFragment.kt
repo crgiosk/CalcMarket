@@ -163,9 +163,15 @@ class NewBuyFragment : Fragment() {
         })
 
         binding.nameProduct.setOnItemClickListener { parent, _, position, _ ->
-            binding.nameProduct.setText((parent.getItemAtPosition(position) as String))
+            val itemSelected = parent.getItemAtPosition(position) as ProductBinding
+            binding.nameProduct.setText(itemSelected.name)
             binding.nameProduct.setSelection(binding.nameProduct.text.length)
             binding.valueEditText.requestFocus()
+
+            productViewModel.currentProduct = itemSelected
+            binding.valueEditText.setText(
+                Extensions.buildCoinFormat(itemSelected.costItem)
+            )
         }
     }
 
@@ -174,10 +180,11 @@ class NewBuyFragment : Fragment() {
         if (editTexts.none { it.text.isEmpty() }) {
             val total = Extensions.removeCoinSymbol(binding.totalEditText.text.toString()).toInt()
             val value = Extensions.removeCoinSymbol(binding.valueEditText.text.toString()).toInt()
+            val amount = binding.amountEditText.text?.toString()?.toInt() ?: 0
             if (productViewModel.currentProduct.id == 0) {
                 productViewModel.currentProduct = ProductBinding(
                         name = binding.nameProduct.text?.toString() ?: String(),
-                        amount = binding.amountEditText.text?.toString()?.toInt() ?: 0,
+                        amount = amount,
                         total = total,
                         costItem = value,
                 )
@@ -189,6 +196,11 @@ class NewBuyFragment : Fragment() {
                     }
                 }
             } else {
+                productViewModel.currentProduct.apply {
+                    this.total = total
+                    this.costItem = value
+                    this.amount = amount
+                }
                 buyAdapter.addItem(
                     productViewModel.currentProduct
                 )
@@ -198,6 +210,7 @@ class NewBuyFragment : Fragment() {
             }
             binding.recyclerViewOrders.smoothScrollToPosition(buyAdapter.itemCount)
             binding.nameProduct.requestFocus()
+            productViewModel.currentProduct = ProductBinding()
         } else {
             editTexts.filter { it.text.toString().isEmpty() }.forEach {
                 it.error = "Rellenar esta opcion."
