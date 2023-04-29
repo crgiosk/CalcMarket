@@ -3,7 +3,6 @@ package com.calcmarket.data.local.di
 import android.content.Context
 import androidx.room.Room
 import com.calcmarket.data.local.daos.BuyDAO
-import com.calcmarket.data.local.daos.ProductBuyDAO
 import com.calcmarket.data.local.daos.ProductDAO
 import com.calcmarket.data.local.db.CalcMarketDataBase
 import dagger.Module
@@ -34,8 +33,5 @@ object DataBaseModule {
     @Provides
     fun getProductDAO(dataBase: CalcMarketDataBase): ProductDAO = dataBase.getProductDAO()
 
-    @Singleton
-    @Provides
-    fun getProductBuyDAO(dataBase: CalcMarketDataBase): ProductBuyDAO = dataBase.getProductBuyDAO()
 
 }

@@ -2,15 +2,16 @@ package com.calcmarket.data.usecase
 
 import com.calcmarket.data.local.repository.BuyRepository
 import com.calcmarket.data.local.entities.BuyEntity
+import com.calcmarket.data.local.entities.ProductsByBuyEntity
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class BuyUseCase @Inject constructor(
     private val repository: BuyRepository
 ) {
-    fun saveLocalBuy(
-        buyEntity: BuyEntity,
-        productEntity: List<Int>
-    ) = repository.saveLocalBuy(buyEntity, productEntity)
+    fun saveLocalBuy(buyEntity: BuyEntity) = repository.saveLocalBuy(buyEntity)
 
-    fun getFullBuys() = repository.getFullBuys()
+    fun saveProductsByBuy(product: List<ProductsByBuyEntity>) = repository.saveProductsByBuy(product)
+
+    fun getFullBuys(): Flow<List<BuyEntity>> = repository.getFullBuys()
 }

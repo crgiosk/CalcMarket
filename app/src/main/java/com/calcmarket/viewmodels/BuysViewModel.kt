@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.calcmarket.data.local.daos.ProductBuyDAO
 import com.calcmarket.data.local.entities.BuyEntity
 import com.calcmarket.data.usecase.BuyUseCase
 import com.calcmarket.ui.binds.BuyBinding
@@ -19,8 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BuysViewModel @Inject constructor(
-    private val buyUseCase: BuyUseCase,
-    private val productBuyDAO: ProductBuyDAO
+    private val buyUseCase: BuyUseCase
 ) : ViewModel() {
 
     private val fullBuysMutableLiveData = MutableLiveData<List<BuyBinding>>()
@@ -40,8 +38,10 @@ class BuysViewModel @Inject constructor(
                     name = formatted,
                     countItems = items.count(),
                     total = items.sumOf { it.total }
-                ),
-                items.map { it.id }
+                )
+            )
+            buyUseCase.saveProductsByBuy(
+                items.map { it.toEntity(idBuy) }
             )
         }
 
@@ -49,10 +49,11 @@ class BuysViewModel @Inject constructor(
 
     fun getFullBuys() {
         viewModelScope.launch {
-            buyUseCase.getFullBuys().collect { buysList ->
-                fullBuysMutableLiveData.postValue(
+            buyUseCase.getFullBuys().collect { list ->
+                list
+        /*        fullBuysMutableLiveData.postValue(
                     buysList.map { it.toBinding() }
-                )
+                )*/
             }
         }
     }
