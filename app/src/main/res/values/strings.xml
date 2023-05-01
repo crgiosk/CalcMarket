@@ -13,4 +13,6 @@
     <string name="valor_unidad">Valor unidad:</string>
     <string name="valor_total">Valor total:</string>
     <string name="listado_compras">Tu listado de compras se vera reflejado en la parte de abajo</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">This is a detail of bought</string>
 </resources>

@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="blue_DAEEF7">#DAEEF7</color>
+    <color name="ios_tap_element">#c1c7d0</color>
 </resources>
