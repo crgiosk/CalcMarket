@@ -50,10 +50,7 @@ class BuysViewModel @Inject constructor(
     fun getFullBuys() {
         viewModelScope.launch {
             buyUseCase.getFullBuys().collect { list ->
-                list
-        /*        fullBuysMutableLiveData.postValue(
-                    buysList.map { it.toBinding() }
-                )*/
+                fullBuysMutableLiveData.value = list.map { it.toBinding() }
             }
         }
     }

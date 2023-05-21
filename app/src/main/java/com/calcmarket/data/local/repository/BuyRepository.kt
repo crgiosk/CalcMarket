@@ -14,5 +14,5 @@ class BuyRepository @Inject constructor(
 
     fun saveProductsByBuy(products: List<ProductsByBuyEntity>) = buyDAO.saveProducts(products)
 
-    fun getFullBuys(): Flow<List<BuyEntity>> = buyDAO.getFullBuys()
+    fun getAllLocalBuy(): Flow<List<BuyEntity>> = buyDAO.getAllLocalBuy()
 }

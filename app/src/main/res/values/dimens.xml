@@ -9,5 +9,6 @@
     <dimen name="xlarge_letter">25sp</dimen>
     <dimen name="edit_text_width">110dp</dimen>
     <dimen name="max_edit_text_width">150dp</dimen>
+    <dimen name="dimen_10">10dp</dimen>
 
 </resources>

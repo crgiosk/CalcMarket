@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.calcmarket.ui.binds.BuyBinding
 
 @Entity(
     tableName = "buy"
@@ -25,5 +26,9 @@ data class BuyEntity(
 ) {
     companion object {
         const val BUY_ID = "buy_id"
+    }
+
+    fun toBinding(): BuyBinding {
+        return BuyBinding(id = id, name = name, totalBuyValue = total, itemsCount = countItems)
     }
 }
