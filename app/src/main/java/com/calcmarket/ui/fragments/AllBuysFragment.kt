@@ -20,8 +20,8 @@ class AllBuysFragment : Fragment() {
 
     private val buyAdapter: BuysAdapter by lazy {
         BuysAdapter {
-            //todo: set clicked buy to viewModel value
-            //detailDialog.show(requireActivity().supportFragmentManager,"detailDialog")
+            viewModel.buySelectedSet(it)
+            findNavController().navigate(R.id.action_allBuysFragment_to_buyDetailFragment)
         }
     }
 
@@ -39,11 +39,14 @@ class AllBuysFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupUi()
+        setupListeners()
+        setupObservers()
+    }
+
+    private fun setupListeners() {
         binding.newBuy.setOnClickListener {
-            //detailDialog.show(requireActivity().supportFragmentManager,"detailDialog")
             findNavController().navigate(R.id.action_allBuysFragment_to_newBuyFragment)
         }
-        observeBuy()
     }
 
     private fun setupUi() {
@@ -58,7 +61,7 @@ class AllBuysFragment : Fragment() {
         viewModel.getFullBuys()
     }
 
-    private fun observeBuy() {
+    private fun setupObservers() {
         viewModel.fullBuysLiveData().observe(viewLifecycleOwner) {
             if (isVisible) {
                 buyAdapter.updateData(it)

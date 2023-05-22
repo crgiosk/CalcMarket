@@ -10,9 +10,11 @@
     <string name="save">Agregar</string>
     <string name="eliminar">Eliminar</string>
     <string name="add_order">Añadir</string>
-    <string name="valor_unidad">Valor unidad:</string>
-    <string name="valor_total">Valor total:</string>
+    <string name="product_unit_value">Valor unidad: %1$s</string>
+    <string name="product_total_value">Valor total: %1$s</string>
     <string name="listado_compras">Tu listado de compras se vera reflejado en la parte de abajo</string>
+    <string name="total_value">Valor total: %1$s</string>
+    <string name="total_products">Total de productos: %1$s</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">This is a detail of bought</string>
 </resources>

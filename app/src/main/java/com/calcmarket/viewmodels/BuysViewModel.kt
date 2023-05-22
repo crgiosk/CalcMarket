@@ -22,8 +22,17 @@ class BuysViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val fullBuysMutableLiveData = MutableLiveData<List<BuyBinding>>()
+    private val _productsByBuyMutableLiveData = MutableLiveData<List<ProductBinding>>()
+    private val _buySelectedMutableLiveData = MutableLiveData<BuyBinding>()
 
     fun fullBuysLiveData(): LiveData<List<BuyBinding>> = fullBuysMutableLiveData
+    fun productsByBuyLiveData(): LiveData<List<ProductBinding>> = _productsByBuyMutableLiveData
+
+    val buySelectedLiveData: LiveData<BuyBinding> = _buySelectedMutableLiveData
+
+    fun buySelectedSet(buy: BuyBinding) {
+        _buySelectedMutableLiveData.value = buy
+    }
 
     fun saveBuy(items: MutableList<ProductBinding>) {
 
@@ -36,7 +45,7 @@ class BuysViewModel @Inject constructor(
                 BuyEntity(
                     id = idBuy,
                     name = formatted,
-                    countItems = items.count(),
+                    countItems = items.sumOf { it.amount },
                     total = items.sumOf { it.total }
                 )
             )
@@ -55,5 +64,12 @@ class BuysViewModel @Inject constructor(
         }
     }
 
+    fun getProductsByBuy(idBuy: Int) {
+        viewModelScope.launch {
+            buyUseCase.getProductsByBuy(idBuy).collect { productList ->
+                _productsByBuyMutableLiveData.value = productList.map { it.toBinding() }
+            }
+        }
+    }
 
 }
