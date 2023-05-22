@@ -12,7 +12,11 @@ import android.widget.EditText
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.calcmarket.core.Extensions
+import com.calcmarket.MainActivity
+import com.calcmarket.R
+import com.calcmarket.core.Extensions.buildCoinFormat
+import com.calcmarket.core.Extensions.removeCoinSymbol
+import com.calcmarket.core.Extensions.showAlertConfirmationDialog
 import com.calcmarket.core.Extensions.showKeyboard
 import com.calcmarket.databinding.FragmentNewBuyBinding
 import com.calcmarket.ui.adapter.BuyAdapter
@@ -30,7 +34,7 @@ class NewBuyFragment : Fragment() {
     private lateinit var binding: FragmentNewBuyBinding
     private val buyAdapter: BuyAdapter by lazy {
         BuyAdapter {
-            binding.totalBuy.text = Extensions.buildCoinFormat(it)
+            binding.totalBuy.text = buildCoinFormat(it)
             binding.buttonSaveBuy.visibility = if (it > 0) View.VISIBLE else View.GONE
         }
     }
@@ -39,10 +43,6 @@ class NewBuyFragment : Fragment() {
         ProductAutoCompleteAdapter {
 
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(
@@ -56,23 +56,37 @@ class NewBuyFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupUI()
+        setupListeners()
+        setupObservers()
+        setDefaultFocus()
+    }
+
+    private fun setupUI() {
         binding.recyclerViewOrders.apply {
             layoutManager = LinearLayoutManager(this.context, RecyclerView.VERTICAL, true)
             adapter = buyAdapter
         }
 
-
         binding.nameProduct.setAdapter(autoCompleteAdapter)
-        setupListeners()
-        setupObservers()
+        productViewModel.currentProduct = ProductBinding()
+    }
 
+    private fun setDefaultFocus() {
         binding.nameProduct.requestFocus()
         binding.nameProduct.showKeyboard()
     }
 
     private fun setupObservers() {
         productViewModel.nameProductsLiveData().observe(viewLifecycleOwner) {
-            autoCompleteAdapter.updateItems(it)
+            if (isVisible) autoCompleteAdapter.updateItems(it)
+        }
+        productViewModel.newProductSavedLiveData().observe(viewLifecycleOwner) {
+            if (isVisible && it != null ) {
+                buyAdapter.addItem(it)
+                productViewModel.resetNewProductValue()
+                productViewModel.currentProduct = ProductBinding()
+            }
         }
     }
 
@@ -81,8 +95,8 @@ class NewBuyFragment : Fragment() {
 
             override fun afterTextChanged(editable: Editable?) {
 
-                val count = Extensions.removeCoinSymbol(editable.toString())
-                val itemValue = Extensions.removeCoinSymbol(binding.valueEditText.text.toString())
+                val count = removeCoinSymbol(editable.toString())
+                val itemValue = removeCoinSymbol(binding.valueEditText.text.toString())
 
                 binding.amountEditText.removeTextChangedListener(this)
 
@@ -105,14 +119,14 @@ class NewBuyFragment : Fragment() {
         binding.valueEditText.addTextChangedListener(object : TextWatcher {
 
             override fun afterTextChanged(editable: Editable?) {
-                val text = Extensions.removeCoinSymbol(editable.toString())
+                val text = removeCoinSymbol(editable.toString())
 
                 binding.valueEditText.removeTextChangedListener(this)
                 if (text == "$" || text == "" || text == "0") {
                     binding.valueEditText.setText("")
                 } else {
                     binding.valueEditText.setText(
-                        Extensions.buildCoinFormat(text.toInt())
+                        buildCoinFormat(text.toInt())
                     )
                     binding.valueEditText.setSelection(
                         binding.valueEditText.text.toString().length
@@ -133,15 +147,21 @@ class NewBuyFragment : Fragment() {
 
         })
 
-        binding.addProduct.setOnClickListener { button ->
+        binding.addProduct.setOnClickListener {
             addProduct()
         }
 
         binding.buttonSaveBuy.setOnClickListener {
-            viewModel.saveBuy(buyAdapter.getData())
+            (requireActivity() as? MainActivity)?.showAlertConfirmationDialog(
+                message = requireContext().getString(R.string.are_you_sure),
+                onAgree = {
+                    viewModel.saveBuy(buyAdapter.getData())
+                    requireActivity().onBackPressed()
+                }
+            )
         }
 
-        binding.amountEditText.setOnEditorActionListener { textView, actionId, _ ->
+        binding.amountEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 addProduct()
             }
@@ -170,7 +190,7 @@ class NewBuyFragment : Fragment() {
 
             productViewModel.currentProduct = itemSelected
             binding.valueEditText.setText(
-                Extensions.buildCoinFormat(itemSelected.costItem)
+                buildCoinFormat(itemSelected.costItem)
             )
         }
     }
@@ -178,8 +198,8 @@ class NewBuyFragment : Fragment() {
     private fun addProduct() {
         val editTexts = binding.formInputs.touchables.filterIsInstance<EditText>()
         if (editTexts.none { it.text.isEmpty() }) {
-            val total = Extensions.removeCoinSymbol(binding.totalEditText.text.toString()).toInt()
-            val value = Extensions.removeCoinSymbol(binding.valueEditText.text.toString()).toInt()
+            val total = removeCoinSymbol(binding.totalEditText.text.toString()).toInt()
+            val value = removeCoinSymbol(binding.valueEditText.text.toString()).toInt()
             val amount = binding.amountEditText.text?.toString()?.toInt() ?: 0
             if (productViewModel.currentProduct.id == 0) {
                 productViewModel.currentProduct = ProductBinding(
@@ -188,13 +208,7 @@ class NewBuyFragment : Fragment() {
                         total = total,
                         costItem = value,
                 )
-                productViewModel.saveProduct {
-                    activity?.runOnUiThread {
-                        buyAdapter.addItem(
-                            productViewModel.currentProduct
-                        )
-                    }
-                }
+                productViewModel.saveProduct()
             } else {
                 productViewModel.currentProduct.apply {
                     this.total = total
@@ -220,11 +234,11 @@ class NewBuyFragment : Fragment() {
 
     private fun calculateAndShowPrice() {
 
-        val count = Extensions.removeCoinSymbol(binding.amountEditText.text.toString())
-        val itemValue = Extensions.removeCoinSymbol(binding.valueEditText.text.toString())
+        val count = removeCoinSymbol(binding.amountEditText.text.toString())
+        val itemValue = removeCoinSymbol(binding.valueEditText.text.toString())
         binding.totalEditText.setText("")
         binding.totalEditText.setText(
-            Extensions.buildCoinFormat(count.toInt() * itemValue.toInt())
+            buildCoinFormat(count.toInt() * itemValue.toInt())
         )
     }
 

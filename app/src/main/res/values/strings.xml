@@ -17,4 +17,7 @@
     <string name="total_products">Total de productos: %1$s</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">This is a detail of bought</string>
+    <string name="title_button_agree">Aceptar</string>
+    <string name="title_button_cancel">Cancelar</string>
+    <string name="are_you_sure">Esta seguro de guardar la compra?</string>
 </resources>

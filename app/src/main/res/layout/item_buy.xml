@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/background_curve"
-        android:paddingTop="@dimen/padding_15">
+        android:layout_marginTop="@dimen/padding"
+        android:padding="@dimen/dimen_5">
 
         <TextView
             android:id="@+id/nameBuy"
