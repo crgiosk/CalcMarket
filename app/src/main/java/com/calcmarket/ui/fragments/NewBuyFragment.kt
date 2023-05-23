@@ -16,17 +16,22 @@ import com.calcmarket.MainActivity
 import com.calcmarket.R
 import com.calcmarket.core.Extensions.buildCoinFormat
 import com.calcmarket.core.Extensions.removeCoinSymbol
-import com.calcmarket.core.Extensions.showAlertConfirmationDialog
 import com.calcmarket.core.Extensions.showKeyboard
+import com.calcmarket.data.local.di.DialogConfirm
 import com.calcmarket.databinding.FragmentNewBuyBinding
 import com.calcmarket.ui.adapter.BuyAdapter
 import com.calcmarket.ui.adapter.ProductAutoCompleteAdapter
 import com.calcmarket.ui.binds.ProductBinding
 import com.calcmarket.viewmodels.BuysViewModel
 import com.calcmarket.viewmodels.ProductViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class NewBuyFragment : Fragment() {
 
+    @Inject
+    lateinit var confirmDialog: DialogConfirm
 
     private val viewModel: BuysViewModel by activityViewModels()
     private val productViewModel: ProductViewModel by activityViewModels()
@@ -151,7 +156,7 @@ class NewBuyFragment : Fragment() {
         }
 
         binding.buttonSaveBuy.setOnClickListener {
-            (requireActivity() as? MainActivity)?.showAlertConfirmationDialog(
+            confirmDialog.showAlertConfirmationDialog(
                 message = requireContext().getString(R.string.are_you_sure),
                 onAgree = {
                     viewModel.saveBuy(buyAdapter.getData())
