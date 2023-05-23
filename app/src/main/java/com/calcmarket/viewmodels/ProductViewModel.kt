@@ -19,10 +19,10 @@ class ProductViewModel @Inject constructor(private val productUseCase: ProductUs
 
     var currentProduct = ProductBinding()
     private val nameProductsMutableLiveData = MutableLiveData<List<ProductBinding>>()
-    private val _newProductSaved = MutableLiveData<ProductBinding?>()
+    private val _newProductSaved = MutableLiveData<Int?>()
 
     fun nameProductsLiveData(): LiveData<List<ProductBinding>> = nameProductsMutableLiveData
-    fun newProductSavedLiveData(): LiveData<ProductBinding?> = _newProductSaved
+    fun newProductSavedLiveData(): LiveData<Int?> = _newProductSaved
 
     fun saveProduct() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -34,7 +34,7 @@ class ProductViewModel @Inject constructor(private val productUseCase: ProductUs
             val id = result.await().toInt()
             if (id > 0){
                 currentProduct.id = id
-                _newProductSaved.postValue(currentProduct)
+                _newProductSaved.postValue(id)
             }
         }
     }

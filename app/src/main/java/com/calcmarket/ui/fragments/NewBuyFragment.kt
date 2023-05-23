@@ -83,9 +83,8 @@ class NewBuyFragment : Fragment() {
         }
         productViewModel.newProductSavedLiveData().observe(viewLifecycleOwner) {
             if (isVisible && it != null ) {
-                buyAdapter.addItem(it)
+                buyAdapter.updateItemId(it)
                 productViewModel.resetNewProductValue()
-                productViewModel.currentProduct = ProductBinding()
             }
         }
     }
@@ -215,10 +214,10 @@ class NewBuyFragment : Fragment() {
                     this.costItem = value
                     this.amount = amount
                 }
-                buyAdapter.addItem(
-                    productViewModel.currentProduct
-                )
             }
+            buyAdapter.addItem(
+                productViewModel.currentProduct
+            )
             binding.formInputs.touchables.filterIsInstance<EditText>().forEach { editText ->
                 editText.setText("")
             }

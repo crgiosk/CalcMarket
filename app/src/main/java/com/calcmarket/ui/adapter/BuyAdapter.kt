@@ -22,6 +22,12 @@ class BuyAdapter(
         onChangeTotal(getTotalBuy())
     }
 
+    fun updateItemId(idItem: Int) {
+        items.lastOrNull {
+            it.id == 0
+        }?.id = idItem
+    }
+
     fun getData() = items
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = ViewHolder(
