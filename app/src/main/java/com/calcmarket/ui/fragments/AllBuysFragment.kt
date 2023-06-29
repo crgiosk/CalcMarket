@@ -10,10 +10,14 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.calcmarket.R
+import com.calcmarket.data.local.di.DialogConfirm
 import com.calcmarket.databinding.FragmentAllBuysBinding
 import com.calcmarket.ui.adapter.BuysAdapter
 import com.calcmarket.viewmodels.BuysViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AllBuysFragment : Fragment() {
 
     private lateinit var binding: FragmentAllBuysBinding
@@ -26,6 +30,9 @@ class AllBuysFragment : Fragment() {
     }
 
     private val viewModel: BuysViewModel by activityViewModels()
+
+    @Inject
+    lateinit var confirmDialog: DialogConfirm
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,7 +52,24 @@ class AllBuysFragment : Fragment() {
 
     private fun setupListeners() {
         binding.newBuy.setOnClickListener {
-            findNavController().navigate(R.id.action_allBuysFragment_to_newBuyFragment)
+            viewModel.checkBuyInProgress {
+                if (it == -1) {
+                    findNavController().navigate(R.id.action_allBuysFragment_to_newBuyFragment)
+                } else {
+                    confirmDialog.showAlertConfirmationDialog(
+                        message = getString(R.string.message_buy_in_progress),
+                        titlePositiveButton = R.string.title_button_continue,
+                        titleNegativeButton = R.string.title_button_delete,
+                        onPositiveButton = {
+                            viewModel.getProductsByBuy(it)
+                        },
+                        onNegativeButton = {
+                            //todo: remove all products by last buy
+                            findNavController().navigate(R.id.action_allBuysFragment_to_newBuyFragment)
+                        }
+                    )
+                }
+            }
         }
     }
 

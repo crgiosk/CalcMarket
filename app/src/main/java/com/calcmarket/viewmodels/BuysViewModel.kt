@@ -24,11 +24,14 @@ class BuysViewModel @Inject constructor(
     private val fullBuysMutableLiveData = MutableLiveData<List<BuyBinding>>()
     private val _productsByBuyMutableLiveData = MutableLiveData<List<ProductBinding>>()
     private val _buySelectedMutableLiveData = MutableLiveData<BuyBinding>()
+    private var buyIdInProgress = -1
 
     fun fullBuysLiveData(): LiveData<List<BuyBinding>> = fullBuysMutableLiveData
     fun productsByBuyLiveData(): LiveData<List<ProductBinding>> = _productsByBuyMutableLiveData
 
     val buySelectedLiveData: LiveData<BuyBinding> = _buySelectedMutableLiveData
+
+    fun buyIdInProgressGet() = buyIdInProgress
 
     fun buySelectedSet(buy: BuyBinding) {
         _buySelectedMutableLiveData.value = buy
@@ -54,6 +57,16 @@ class BuysViewModel @Inject constructor(
             )
         }
 
+    }
+
+    fun checkBuyInProgress(onComplete: (Int) -> Unit) {
+        viewModelScope.launch {
+            val idBuy = async {
+                buyUseCase.checkBuyInProgress()
+            }
+            buyIdInProgress = idBuy.await()
+            onComplete.invoke(buyIdInProgress)
+        }
     }
 
     fun getFullBuys() {

@@ -14,7 +14,7 @@ import com.calcmarket.data.local.entities.ProductEntity
         ProductEntity::class,
         ProductsByBuyEntity::class
     ],
-    version = 1
+    version = 2
 )
 abstract class CalcMarketDataBase : RoomDatabase() {
     abstract fun getBuyDAO(): BuyDAO

@@ -17,8 +17,8 @@ class DialogConfirm @Inject constructor(private val activity: AppCompatActivity)
         title: String = "",
         titlePositiveButton: Int = R.string.title_button_agree,
         titleNegativeButton: Int = R.string.title_button_cancel,
-        onAgree: () -> Unit,
-        onCancel: (() -> Unit?)? = null,
+        onPositiveButton: () -> Unit,
+        onNegativeButton: (() -> Unit?)? = null,
         isCancelable: Boolean = false
     ) {
         val dialog = AlertDialog.Builder(activity, R.style.DialogTheme)
@@ -27,11 +27,11 @@ class DialogConfirm @Inject constructor(private val activity: AppCompatActivity)
             .setCancelable(isCancelable)
             .setPositiveButton(titlePositiveButton) { dialog, _ ->
                 dialog.dismiss()
-                onAgree()
+                onPositiveButton()
             }
             .setNegativeButton(titleNegativeButton) { dialog, _ ->
                 dialog.dismiss()
-                onCancel?.invoke()
+                onNegativeButton?.invoke()
             }
             .create()
 

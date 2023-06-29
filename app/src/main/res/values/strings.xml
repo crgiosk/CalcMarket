@@ -15,9 +15,16 @@
     <string name="listado_compras">Tu listado de compras se vera reflejado en la parte de abajo</string>
     <string name="total_value">Valor total: %1$s</string>
     <string name="total_products">Total de productos: %1$s</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">This is a detail of bought</string>
+    <string name="title_detail_buy">This is a detail of bought</string>
+    <string name="are_you_sure">Esta seguro de guardar la compra?</string>
+
+    <!--alert messages-->
+    <string name="message_buy_in_progress">Hay una compra en curso.\n\n Desea continuar o eliminar?</string>
+
+    <!--title views (buttons textviews)-->
+    <string name="title_button_continue">Continuar</string>
     <string name="title_button_agree">Aceptar</string>
     <string name="title_button_cancel">Cancelar</string>
-    <string name="are_you_sure">Esta seguro de guardar la compra?</string>
+    <string name="title_button_delete">Eliminar</string>
+
 </resources>

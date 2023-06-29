@@ -158,8 +158,7 @@ class NewBuyFragment : Fragment() {
         binding.buttonSaveBuy.setOnClickListener {
             confirmDialog.showAlertConfirmationDialog(
                 message = requireContext().getString(R.string.are_you_sure),
-                onAgree = {
-                    viewModel.saveBuy(buyAdapter.getData())
+                onPositiveButton = {
                     requireActivity().onBackPressed()
                 }
             )

@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 import com.calcmarket.ui.binds.BuyBinding
 
 @Entity(
-    tableName = "buy"
+    tableName = BuyEntity.NAME_TABLE
 )
 data class BuyEntity(
     //la primary key, sera la fecha en milis
@@ -22,10 +22,15 @@ data class BuyEntity(
     val countItems: Int =  0,
 
     @ColumnInfo(name = "buy_total")
-    val total: Int =  0
+    val total: Int =  0,
+
+    @ColumnInfo(name = COLUMN_IN_PROGRESS)
+    val isInProgress: Boolean =  false
 ) {
     companion object {
         const val BUY_ID = "buy_id"
+        const val NAME_TABLE = "buy"
+        const val COLUMN_IN_PROGRESS = "buy_in_progress"
     }
 
     fun toBinding(): BuyBinding {

@@ -22,7 +22,10 @@ object DataBaseModule {
     @Singleton
     @Provides
     fun getDatabaseInstance(@ApplicationContext context: Context): CalcMarketDataBase {
-        return Room.databaseBuilder(context, CalcMarketDataBase::class.java, DATABASE_NAME).build()
+        return Room
+            .databaseBuilder(context, CalcMarketDataBase::class.java, DATABASE_NAME)
+            .addMigrations(MIGRATION_1_2)
+            .build()
     }
 
     @Singleton

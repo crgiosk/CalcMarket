@@ -13,9 +13,8 @@ class BuyAdapter(
 ) : RecyclerView.Adapter<BuyAdapter.ViewHolder>() {
 
     private var items: MutableList<ProductBinding> by basicDiffUtil(
-        areContentsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
         areItemsTheSame = { old, new -> old == new }
-    )
+    ) { oldItem, newItem -> oldItem.id == newItem.id }
 
     fun addItem(item: ProductBinding) {
         items.add(item)
