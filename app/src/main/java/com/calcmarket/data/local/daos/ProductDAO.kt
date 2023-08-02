@@ -15,4 +15,7 @@ interface ProductDAO {
     @Query("SELECT * FROM product WHERE product_name LIKE '%' || :queryString || '%' ")
     fun getProductsByName(queryString: String): Flow<List<ProductEntity>>
 
+    @Query("SELECT * FROM product WHERE product_name LIKE '%' || :queryString || '%' ")
+    suspend fun getProductByName(queryString: String): ProductEntity?
+
 }

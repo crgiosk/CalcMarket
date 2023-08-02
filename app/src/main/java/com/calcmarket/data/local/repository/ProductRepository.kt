@@ -11,5 +11,7 @@ class ProductRepository @Inject constructor(
 
     fun getProductByQuery(query: String) = productDAO.getProductsByName(query)
 
+    suspend fun getProductByName(name: String) = productDAO.getProductByName(name)
+
     fun saveProduct(productEntity: ProductEntity) = productDAO.saveProduct(productEntity)
 }

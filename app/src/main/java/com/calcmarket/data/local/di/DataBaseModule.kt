@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.calcmarket.data.local.daos.BuyDAO
 import com.calcmarket.data.local.daos.ProductDAO
 import com.calcmarket.data.local.db.CalcMarketDataBase
+import com.calcmarket.data.local.db.Migrations.MIGRATION_1_2
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

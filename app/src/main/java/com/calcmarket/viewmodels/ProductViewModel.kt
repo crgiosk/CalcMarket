@@ -12,6 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,12 +20,10 @@ class ProductViewModel @Inject constructor(private val productUseCase: ProductUs
 
     var currentProduct = ProductBinding()
     private val nameProductsMutableLiveData = MutableLiveData<List<ProductBinding>>()
-    private val _newProductSaved = MutableLiveData<Int?>()
 
     fun nameProductsLiveData(): LiveData<List<ProductBinding>> = nameProductsMutableLiveData
-    fun newProductSavedLiveData(): LiveData<Int?> = _newProductSaved
 
-    fun saveProduct() {
+    fun newProduct(onSuccessAction: (Int) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             val result = async {
                 productUseCase.saveProduct(
@@ -34,13 +33,20 @@ class ProductViewModel @Inject constructor(private val productUseCase: ProductUs
             val id = result.await().toInt()
             if (id > 0){
                 currentProduct.id = id
-                _newProductSaved.postValue(id)
+                withContext(Dispatchers.Main) {
+                    onSuccessAction(id)
+                }
             }
         }
     }
 
-    fun resetNewProductValue() {
-        _newProductSaved.value = null
+    fun getProductByName(name: String, onSuccessAction: (ProductBinding?) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val product = productUseCase.getProductByName(name)?.toBinding()
+            withContext(Dispatchers.Main) {
+                onSuccessAction(product)
+            }
+        }
     }
 
     fun getProductByQuery(query: String) {

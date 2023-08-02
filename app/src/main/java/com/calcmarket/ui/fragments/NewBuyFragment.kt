@@ -12,7 +12,6 @@ import android.widget.EditText
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.calcmarket.MainActivity
 import com.calcmarket.R
 import com.calcmarket.core.Extensions.buildCoinFormat
 import com.calcmarket.core.Extensions.removeCoinSymbol
@@ -65,6 +64,17 @@ class NewBuyFragment : Fragment() {
         setupListeners()
         setupObservers()
         setDefaultFocus()
+        validateExistBuy()
+    }
+
+    private fun validateExistBuy() {
+        if (viewModel.buySelectedLiveData.value == null) {
+            viewModel.createNewBuy()
+        } else {
+            viewModel.getProductsByBuy(viewModel.buySelectedLiveData.value?.id ?: 0) {
+                buyAdapter.updateData(it)
+            }
+        }
     }
 
     private fun setupUI() {
@@ -85,12 +95,6 @@ class NewBuyFragment : Fragment() {
     private fun setupObservers() {
         productViewModel.nameProductsLiveData().observe(viewLifecycleOwner) {
             if (isVisible) autoCompleteAdapter.updateItems(it)
-        }
-        productViewModel.newProductSavedLiveData().observe(viewLifecycleOwner) {
-            if (isVisible && it != null ) {
-                buyAdapter.updateItemId(it)
-                productViewModel.resetNewProductValue()
-            }
         }
     }
 
@@ -203,36 +207,64 @@ class NewBuyFragment : Fragment() {
         if (editTexts.none { it.text.isEmpty() }) {
             val total = removeCoinSymbol(binding.totalEditText.text.toString()).toInt()
             val value = removeCoinSymbol(binding.valueEditText.text.toString()).toInt()
+            val nameProduct = binding.nameProduct.text?.toString() ?: String()
             val amount = binding.amountEditText.text?.toString()?.toInt() ?: 0
-            if (productViewModel.currentProduct.id == 0) {
-                productViewModel.currentProduct = ProductBinding(
-                        name = binding.nameProduct.text?.toString() ?: String(),
-                        amount = amount,
-                        total = total,
-                        costItem = value,
-                )
-                productViewModel.saveProduct()
-            } else {
-                productViewModel.currentProduct.apply {
-                    this.total = total
-                    this.costItem = value
-                    this.amount = amount
+            productViewModel.getProductByName(nameProduct) { product ->
+                if (product != null ) {
+                    processExistProduct(product, total, value, amount)
+                } else {
+                    processNotExistProduct(nameProduct, amount, total, value)
                 }
+                clearAndResetForm(editTexts)
             }
-            buyAdapter.addItem(
-                productViewModel.currentProduct
-            )
-            binding.formInputs.touchables.filterIsInstance<EditText>().forEach { editText ->
-                editText.setText("")
-            }
-            binding.recyclerViewOrders.smoothScrollToPosition(buyAdapter.itemCount)
-            binding.nameProduct.requestFocus()
-            productViewModel.currentProduct = ProductBinding()
         } else {
             editTexts.filter { it.text.toString().isEmpty() }.forEach {
                 it.error = "Rellenar esta opcion."
             }
         }
+    }
+
+    private fun clearAndResetForm(editTexts: List<EditText>) {
+        editTexts.forEach { editText ->
+            editText.setText("")
+        }
+        binding.recyclerViewOrders.smoothScrollToPosition(buyAdapter.itemCount)
+        binding.nameProduct.requestFocus()
+    }
+
+    private fun processNotExistProduct(
+        nameProduct: String,
+        amount: Int,
+        total: Int,
+        value: Int
+    ) {
+        productViewModel.currentProduct = ProductBinding(
+            name = nameProduct,
+            amount = amount,
+            total = total,
+            costItem = value,
+        )
+        productViewModel.newProduct {
+            productViewModel.currentProduct.id = it
+            viewModel.saveProductBuy(productViewModel.currentProduct)
+            productViewModel.currentProduct = ProductBinding()
+        }
+    }
+
+    private fun processExistProduct(
+        product: ProductBinding,
+        total: Int,
+        value: Int,
+        amount: Int
+    ) {
+        productViewModel.currentProduct.apply {
+            this.id = product.id
+            this.total = total
+            this.costItem = value
+            this.amount = amount
+        }
+        viewModel.saveProductBuy(productViewModel.currentProduct)
+        productViewModel.currentProduct = ProductBinding()
     }
 
     private fun calculateAndShowPrice() {

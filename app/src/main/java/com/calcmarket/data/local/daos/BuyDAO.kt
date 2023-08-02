@@ -29,4 +29,6 @@ interface BuyDAO {
     )
     fun getProductsByBuy(idBuy: Int): Flow<List<ProductsByBuyList>>
 
+    @Query("SELECT * FROM buy WHERE buy_in_progress = 1 ORDER BY buy_id DESC LIMIT 1 ")
+    suspend fun checkBuyInProgress(): BuyEntity?
 }

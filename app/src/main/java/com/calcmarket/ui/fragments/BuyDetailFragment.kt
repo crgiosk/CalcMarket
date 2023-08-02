@@ -36,12 +36,11 @@ class BuyDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupUI()
-        setupObservers()
-        viewModel.getProductsByBuy(viewModel.buySelectedLiveData.value?.id ?: 0)
+        getProducts()
     }
 
-    private fun setupObservers() {
-        viewModel.productsByBuyLiveData().observe(viewLifecycleOwner) {
+    private fun getProducts() {
+        viewModel.getProductsByBuy(viewModel.buySelectedLiveData.value?.id ?: 0) {
             myAdapter.updateData(it)
         }
     }

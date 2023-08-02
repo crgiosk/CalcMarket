@@ -53,7 +53,7 @@ class AllBuysFragment : Fragment() {
     private fun setupListeners() {
         binding.newBuy.setOnClickListener {
             viewModel.checkBuyInProgress {
-                if (it == -1) {
+                if (it == null) {
                     findNavController().navigate(R.id.action_allBuysFragment_to_newBuyFragment)
                 } else {
                     confirmDialog.showAlertConfirmationDialog(
@@ -61,7 +61,8 @@ class AllBuysFragment : Fragment() {
                         titlePositiveButton = R.string.title_button_continue,
                         titleNegativeButton = R.string.title_button_delete,
                         onPositiveButton = {
-                            viewModel.getProductsByBuy(it)
+                            viewModel.buySelectedSet(it)
+                            findNavController().navigate(R.id.action_allBuysFragment_to_newBuyFragment)
                         },
                         onNegativeButton = {
                             //todo: remove all products by last buy
@@ -86,7 +87,7 @@ class AllBuysFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        viewModel.fullBuysLiveData().observe(viewLifecycleOwner) {
+        viewModel.fullBuysMutableLiveData.observe(viewLifecycleOwner) {
             if (isVisible) {
                 buyAdapter.updateData(it)
             }

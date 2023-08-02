@@ -33,7 +33,7 @@
                 android:focusableInTouchMode="true"
                 android:gravity="center|start"
                 android:hint="@string/name_product"
-                android:inputType="textVisiblePassword"
+                android:inputType="textCapSentences"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"

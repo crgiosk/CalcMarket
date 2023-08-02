@@ -12,6 +12,8 @@ class ProductUseCase @Inject constructor(
 
     fun getProductByQuery(query: String) = repository.getProductByQuery(query)
 
+    suspend fun getProductByName(name: String) = repository.getProductByName(name)
+
     fun saveProduct(productEntity: ProductEntity) = repository.saveProduct(productEntity)
 
 }

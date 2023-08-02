@@ -16,15 +16,10 @@ class BuyAdapter(
         areItemsTheSame = { old, new -> old == new }
     ) { oldItem, newItem -> oldItem.id == newItem.id }
 
-    fun addItem(item: ProductBinding) {
-        items.add(item)
+    fun updateData(data: List<ProductBinding>) {
+        items.clear()
+        items.addAll(data)
         onChangeTotal(getTotalBuy())
-    }
-
-    fun updateItemId(idItem: Int) {
-        items.lastOrNull {
-            it.id == 0
-        }?.id = idItem
     }
 
     fun getData() = items
