@@ -20,4 +20,6 @@ class BuyRepository @Inject constructor(
     fun getProductsByBuy(idBuy: Int): Flow<List<ProductsByBuyList>> = buyDAO.getProductsByBuy(idBuy)
 
     suspend fun checkBuyInProgress(): BuyEntity? = buyDAO.checkBuyInProgress()
+
+    suspend fun deleteBuyInProgress(idBuy: Int) = buyDAO.deleteBuyWithProduct(idBuy)
 }

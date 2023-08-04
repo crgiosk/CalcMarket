@@ -91,4 +91,13 @@ class BuysViewModel @Inject constructor(
         }
     }
 
+    fun deleteBuyInProgress(buyId: Int, onSuccess: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            buyUseCase.deleteBuyInProgress(buyId)
+            withContext(Dispatchers.Main) {
+                onSuccess.invoke()
+            }
+        }
+    }
+
 }

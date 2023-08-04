@@ -31,4 +31,16 @@ interface BuyDAO {
 
     @Query("SELECT * FROM buy WHERE buy_in_progress = 1 ORDER BY buy_id DESC LIMIT 1 ")
     suspend fun checkBuyInProgress(): BuyEntity?
+
+    @Query("DELETE from buy WHERE buy_id=:idBuy AND buy_in_progress = 1")
+    suspend fun deleteBuyInProgress(idBuy: Int): Int
+
+    @Query("DELETE from products_by_buy WHERE fk_buy_id=:idBuy")
+    suspend fun deleteProductByBuy(idBuy: Int): Int
+
+    @Transaction
+    suspend fun deleteBuyWithProduct(idBuy: Int) {
+        deleteProductByBuy(idBuy)
+        deleteBuyInProgress(idBuy)
+    }
 }

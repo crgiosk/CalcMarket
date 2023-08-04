@@ -16,6 +16,8 @@ class BuyUseCase @Inject constructor(
 
     suspend fun checkBuyInProgress(): BuyEntity? = repository.checkBuyInProgress()
 
+    suspend fun deleteBuyInProgress(idBuy: Int) = repository.deleteBuyInProgress(idBuy)
+
     fun getFullBuys(): Flow<List<BuyEntity>> = repository.getAllLocalBuy()
 
     fun getProductsByBuy(idBuy: Int): Flow<List<ProductsByBuyList>> = repository.getProductsByBuy(idBuy)

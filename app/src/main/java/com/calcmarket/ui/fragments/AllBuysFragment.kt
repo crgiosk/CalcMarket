@@ -65,8 +65,9 @@ class AllBuysFragment : Fragment() {
                             findNavController().navigate(R.id.action_allBuysFragment_to_newBuyFragment)
                         },
                         onNegativeButton = {
-                            //todo: remove all products by last buy
-                            findNavController().navigate(R.id.action_allBuysFragment_to_newBuyFragment)
+                            viewModel.deleteBuyInProgress(it.id) {
+                                findNavController().navigate(R.id.action_allBuysFragment_to_newBuyFragment)
+                            }
                         }
                     )
                 }
@@ -89,7 +90,7 @@ class AllBuysFragment : Fragment() {
     private fun setupObservers() {
         viewModel.fullBuysMutableLiveData.observe(viewLifecycleOwner) {
             if (isVisible) {
-                buyAdapter.updateData(it)
+                buyAdapter.submitList(it)
             }
         }
     }
