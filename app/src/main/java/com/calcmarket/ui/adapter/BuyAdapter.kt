@@ -2,7 +2,9 @@ package com.calcmarket.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.calcmarket.core.BaseItemCallback
 import com.calcmarket.core.Extensions
 import com.calcmarket.core.Extensions.basicDiffUtil
 import com.calcmarket.databinding.ItemProductBinding
@@ -10,7 +12,18 @@ import com.calcmarket.ui.binds.ProductBinding
 
 class BuyAdapter(
     val onChangeTotal: (Int) -> Unit
-) : RecyclerView.Adapter<BuyAdapter.ViewHolder>() {
+) : ListAdapter<ProductBinding,BuyAdapter.ViewHolder>(
+    object : BaseItemCallback<ProductBinding>() {
+        override fun areItemsTheSame(oldItem: ProductBinding, newItem: ProductBinding): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: ProductBinding, newItem: ProductBinding): Boolean {
+            return oldItem == newItem
+        }
+
+    }
+) {
 
     private var items: MutableList<ProductBinding> by basicDiffUtil(
         areItemsTheSame = { old, new -> old == new }
