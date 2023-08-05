@@ -40,8 +40,9 @@ class BuyDetailFragment : Fragment() {
     }
 
     private fun getProducts() {
-        viewModel.getProductsByBuy(viewModel.buySelectedLiveData.value?.id ?: 0) {
-            myAdapter.updateData(it)
+
+        viewModel.productsByBuyLiveData.observe(viewLifecycleOwner) { products ->
+            if (isAdded && isVisible) myAdapter.updateData(products)
         }
     }
 

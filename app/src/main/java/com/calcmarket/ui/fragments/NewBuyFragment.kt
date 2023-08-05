@@ -70,10 +70,6 @@ class NewBuyFragment : Fragment() {
     private fun validateExistBuy() {
         if (viewModel.buySelectedLiveData.value == null) {
             viewModel.createNewBuy()
-        } else {
-            viewModel.getProductsByBuy(viewModel.buySelectedLiveData.value?.id ?: 0) {
-                buyAdapter.updateData(it)
-            }
         }
     }
 
@@ -95,6 +91,10 @@ class NewBuyFragment : Fragment() {
     private fun setupObservers() {
         productViewModel.nameProductsLiveData().observe(viewLifecycleOwner) {
             if (isVisible) autoCompleteAdapter.updateItems(it)
+        }
+
+        viewModel.productsByBuyLiveData.observe(viewLifecycleOwner) { products ->
+            buyAdapter.updateData(products)
         }
     }
 
@@ -275,6 +275,17 @@ class NewBuyFragment : Fragment() {
         binding.totalEditText.setText(
             buildCoinFormat(count.toInt() * itemValue.toInt())
         )
+    }
+
+    private fun saveProductByBuy() {
+        //todo: cada vez que se agregue o quite un prodiucto se debe actualizar la bd
+        //las tablas de buy y de los productos by buy
+        viewModel.updateItemsBuy(viewModel.buySelectedLiveData.value?.id ?: -1,
+            buyAdapter.getData()
+        )
+
+        /*countItems = items.sumOf { it.amount },
+        total = items.sumOf { it.total }*/
     }
 
 }

@@ -1,6 +1,7 @@
 package com.calcmarket.viewmodels
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,6 +28,17 @@ class BuysViewModel @Inject constructor(
 
     private val _buySelectedMutableLiveData = MutableLiveData<BuyBinding>()
     val buySelectedLiveData: LiveData<BuyBinding> = _buySelectedMutableLiveData
+
+    private val _productsByBuyLiveData = MediatorLiveData<List<ProductBinding>>().apply {
+        addSource(buySelectedLiveData) { myBuy ->
+            viewModelScope.launch {
+                buyUseCase.getProductsByBuy(myBuy.id).collect { products ->
+                    value =  products.map { it.toBinding() }
+                }
+            }
+        }
+    }
+    val productsByBuyLiveData: LiveData<List<ProductBinding>> get() = _productsByBuyLiveData
 
     fun buySelectedSet(buy: BuyBinding) {
         _buySelectedMutableLiveData.value = buy
