@@ -32,8 +32,8 @@ class ProductsByBuyAdapter : RecyclerView.Adapter<ProductsByBuyAdapter.ViewHolde
 
     inner class ViewHolder(private val myView: ItemChildProductBinding) : BaseViewHolder<ProductBinding>(myView.root) {
 
-        override fun bind(item: ProductBinding) {
-            myView.product = item
+        override fun bind(model: ProductBinding) {
+            myView.product = model
         }
     }
 }

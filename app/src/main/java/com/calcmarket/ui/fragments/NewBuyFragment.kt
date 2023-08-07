@@ -94,7 +94,7 @@ class NewBuyFragment : Fragment() {
         }
 
         viewModel.productsByBuyLiveData.observe(viewLifecycleOwner) { products ->
-            buyAdapter.updateData(products)
+            buyAdapter.mySubmitList(products)
         }
     }
 
