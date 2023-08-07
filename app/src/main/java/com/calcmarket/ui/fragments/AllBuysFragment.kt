@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.calcmarket.R
 import com.calcmarket.data.local.di.DialogConfirm
 import com.calcmarket.databinding.FragmentAllBuysBinding
-import com.calcmarket.ui.adapter.BuysAdapter
+import com.calcmarket.ui.adapter.BuysListAdapter
 import com.calcmarket.viewmodels.BuysViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -22,8 +22,8 @@ class AllBuysFragment : Fragment() {
 
     private lateinit var binding: FragmentAllBuysBinding
 
-    private val buyAdapter: BuysAdapter by lazy {
-        BuysAdapter {
+    private val buyAdapter: BuysListAdapter by lazy {
+        BuysListAdapter {
             viewModel.buySelectedSet(it)
             findNavController().navigate(R.id.action_allBuysFragment_to_buyDetailFragment)
         }

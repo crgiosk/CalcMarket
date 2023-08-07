@@ -76,7 +76,9 @@ class BuysViewModel @Inject constructor(
     fun getFullBuys() {
         viewModelScope.launch {
             buyUseCase.getFullBuys().collect { list ->
-                _fullBuysMutableLiveData.value = list.map { it.toBinding() }
+                withContext(Dispatchers.Main) {
+                    _fullBuysMutableLiveData.value = list.map { it.toBinding() }
+                }
             }
         }
     }

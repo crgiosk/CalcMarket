@@ -5,6 +5,8 @@ import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import kotlin.properties.Delegates
@@ -23,6 +25,25 @@ object Extensions {
                 imm.hideSoftInputFromWindow(it.windowToken, 0)
             }
         }
+    }
+
+    fun <T, VH : RecyclerView.ViewHolder> ListAdapter<T, VH>.doAfterUpdate(block: () -> Unit) {
+        registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                block()
+                unregisterAdapterDataObserver(this)
+            }
+
+            override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+                block()
+                unregisterAdapterDataObserver(this)
+            }
+
+            override fun onItemRangeChanged(positionStart: Int, itemCount: Int) {
+                block()
+                unregisterAdapterDataObserver(this)
+            }
+        })
     }
 
     fun buildCoinFormat(number: Int): String {
