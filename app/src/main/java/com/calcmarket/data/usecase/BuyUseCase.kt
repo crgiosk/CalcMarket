@@ -22,4 +22,7 @@ class BuyUseCase @Inject constructor(
 
     fun getProductsByBuy(idBuy: Int): Flow<List<ProductsByBuyList>> = repository.getProductsByBuy(idBuy)
 
+    suspend fun updateItemsAndCostItemsBuy(idBuy: Int, countItems: Int, total: Int): Int =
+        repository.updateItemsAndCostItemsBuy(idBuy, countItems, total)
+
 }

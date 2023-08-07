@@ -83,14 +83,14 @@ class BuysViewModel @Inject constructor(
         }
     }
 
-    fun getProductsByBuy(
-        idBuy: Int,
-        onSuccess: (items: List<ProductBinding>) -> Unit
-    ) {
-        viewModelScope.launch {
-            buyUseCase.getProductsByBuy(idBuy).collect { productList ->
-                onSuccess(productList.map { it.toBinding() } )
-            }
+    fun updateItemsBuy(idBuy: Int, items: MutableList<ProductBinding>) {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            buyUseCase.updateItemsAndCostItemsBuy(
+                idBuy = idBuy,
+                countItems = items.sumOf { it.amount },
+                total = items.sumOf { it.total }
+            )
         }
     }
 

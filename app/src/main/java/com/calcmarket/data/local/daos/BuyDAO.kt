@@ -43,4 +43,7 @@ interface BuyDAO {
         deleteProductByBuy(idBuy)
         deleteBuyInProgress(idBuy)
     }
+
+    @Query("UPDATE buy SET buy_items = :countItems, buy_total = :total WHERE buy_id = :idBuy")
+    suspend fun updateItemsAndCostItemsBuy(idBuy: Int, countItems: Int, total: Int): Int
 }

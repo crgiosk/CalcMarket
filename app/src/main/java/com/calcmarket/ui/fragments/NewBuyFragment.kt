@@ -163,7 +163,10 @@ class NewBuyFragment : Fragment() {
             confirmDialog.showAlertConfirmationDialog(
                 message = requireContext().getString(R.string.are_you_sure),
                 onPositiveButton = {
-                    requireActivity().onBackPressed()
+                    viewModel.buySelectedLiveData.value?.let { buy ->
+                        viewModel.updateItemsBuy(buy.id, buyAdapter.getData())
+                        requireActivity().onBackPressed()
+                    }
                 }
             )
         }

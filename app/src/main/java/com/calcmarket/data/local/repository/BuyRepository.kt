@@ -22,4 +22,7 @@ class BuyRepository @Inject constructor(
     suspend fun checkBuyInProgress(): BuyEntity? = buyDAO.checkBuyInProgress()
 
     suspend fun deleteBuyInProgress(idBuy: Int) = buyDAO.deleteBuyWithProduct(idBuy)
+
+    suspend fun updateItemsAndCostItemsBuy(idBuy: Int, countItems: Int, total: Int): Int =
+        buyDAO.updateItemsAndCostItemsBuy(idBuy, countItems, total)
 }
