@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -37,10 +38,18 @@ class NewBuyFragment : Fragment() {
 
     private lateinit var binding: FragmentNewBuyBinding
     private val buyAdapter: BuyAdapter by lazy {
-        BuyAdapter {
-            binding.totalBuy.text = buildCoinFormat(it)
-            binding.buttonSaveBuy.visibility = if (it > 0) View.VISIBLE else View.GONE
-        }
+        BuyAdapter(
+            onChangeTotal = {
+                binding.totalBuy.text = buildCoinFormat(it)
+                binding.buttonSaveBuy.isVisible = it > 0
+            },
+            onUpdateProduct = {
+                viewModel.updateItemBuy(it)
+            },
+            onDeleteProduct = {
+                viewModel.deleteItemBuy(it)
+            }
+        )
     }
 
     private val autoCompleteAdapter: ProductAutoCompleteAdapter by lazy {
@@ -249,8 +258,7 @@ class NewBuyFragment : Fragment() {
         )
         productViewModel.newProduct {
             productViewModel.currentProduct.id = it
-            viewModel.saveProductBuy(productViewModel.currentProduct)
-            productViewModel.currentProduct = ProductBinding()
+            saveProductToBuy()
         }
     }
 
@@ -262,10 +270,15 @@ class NewBuyFragment : Fragment() {
     ) {
         productViewModel.currentProduct.apply {
             this.id = product.id
+            this.productBuyId = product.productBuyId
             this.total = total
             this.costItem = value
             this.amount = amount
         }
+        saveProductToBuy()
+    }
+
+    private fun saveProductToBuy() {
         viewModel.saveProductBuy(productViewModel.currentProduct)
         productViewModel.currentProduct = ProductBinding()
     }
@@ -278,17 +291,6 @@ class NewBuyFragment : Fragment() {
         binding.totalEditText.setText(
             buildCoinFormat(count.toInt() * itemValue.toInt())
         )
-    }
-
-    private fun saveProductByBuy() {
-        //todo: cada vez que se agregue o quite un prodiucto se debe actualizar la bd
-        //las tablas de buy y de los productos by buy
-        viewModel.updateItemsBuy(viewModel.buySelectedLiveData.value?.id ?: -1,
-            buyAdapter.getData()
-        )
-
-        /*countItems = items.sumOf { it.amount },
-        total = items.sumOf { it.total }*/
     }
 
 }

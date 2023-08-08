@@ -83,6 +83,26 @@ class BuysViewModel @Inject constructor(
         }
     }
 
+    fun updateItemBuy(product: ProductBinding) {
+        viewModelScope.launch(Dispatchers.IO) {
+            buySelectedLiveData.value?.let {
+                buyUseCase.updateCostAmountItemBuy(
+                    product.toEntity(it.id)
+                )
+            }
+        }
+    }
+
+    fun deleteItemBuy(product: ProductBinding) {
+        viewModelScope.launch(Dispatchers.IO) {
+            buySelectedLiveData.value?.let {
+                buyUseCase.deleteItemBuy(
+                    product.toEntity(it.id)
+                )
+            }
+        }
+    }
+
     fun updateItemsBuy(idBuy: Int, items: MutableList<ProductBinding>) {
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -95,9 +115,6 @@ class BuysViewModel @Inject constructor(
     }
 
     fun saveProductBuy(product: ProductBinding) {
-
-        //todo:: se procede a guardar un producto cada que se toca el boton de agregar
-        //todo:: tener en cuenta la actualizacion del producto (sumar, restar o eliminarlo)
         viewModelScope.launch(Dispatchers.IO) {
             buyUseCase.saveProductsByBuy(
                 listOf(product.toEntity(buySelectedLiveData.value?.id ?: -1))

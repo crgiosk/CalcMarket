@@ -9,7 +9,9 @@ import com.calcmarket.databinding.ItemProductBinding
 import com.calcmarket.ui.binds.ProductBinding
 
 class BuyAdapter(
-    val onChangeTotal: (Int) -> Unit
+    val onChangeTotal: (Int) -> Unit,
+    val onUpdateProduct: (ProductBinding) -> Unit,
+    val onDeleteProduct: (ProductBinding) -> Unit
 ) : RecyclerView.Adapter<BuyAdapter.ViewHolder>() {
 
     private val items: MutableList<ProductBinding> = mutableListOf()
@@ -53,7 +55,7 @@ class BuyAdapter(
                 items.find { it.id == model.id }?.let {
                     it.amount = cant
                     it.total = newTotal
-                    notifyItemChanged(adapterPosition)
+                    updateItemPosition(model, cant, newTotal, adapterPosition)
                 }
             }
         }
@@ -66,12 +68,13 @@ class BuyAdapter(
     fun mySubmitList(list: List<ProductBinding>) {
         items.clear()
         items.addAll(list)
+        notifyItemRangeChanged(0, list.count())
         notifyChangeTotalBuy()
     }
 
     private fun removeItemAtPosition(position: Int) {
+        onDeleteProduct(items[position])
         items.removeAt(position)
-        notifyItemRemoved(position)
         notifyChangeTotalBuy()
     }
 
@@ -79,7 +82,7 @@ class BuyAdapter(
         items.find { it.id == model.id }?.let {
             it.amount = cant
             it.total = newTotal
-            notifyItemChanged(position)
+            onUpdateProduct(it)
             notifyChangeTotalBuy()
         }
     }

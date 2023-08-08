@@ -6,6 +6,8 @@ import com.calcmarket.ui.binds.ProductBinding
 data class ProductsByBuyList(
     @ColumnInfo(name = ProductEntity.NAME_COLUMN_ID)
     val productId: Int,
+    @ColumnInfo(name = NAME_COLUMN_PRODUCT_BUY_ID)
+    val productBuyId: Int,
     @ColumnInfo(name = ProductEntity.NAME_COLUMN_NAME)
     val name: String,
     @ColumnInfo(name = ProductEntity.NAME_COLUMN_COST)
@@ -22,11 +24,16 @@ data class ProductsByBuyList(
     fun toBinding(): ProductBinding {
         return ProductBinding(
             id = productId,
+            productBuyId = productBuyId,
             name = name,
             costItem = costProduct,
             amount = amount,
             total = total,
             isFavorite = isFavorite
         )
+    }
+
+    companion object {
+        const val NAME_COLUMN_PRODUCT_BUY_ID = "productBuyId"
     }
 }
