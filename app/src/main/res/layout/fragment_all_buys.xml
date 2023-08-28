@@ -5,6 +5,9 @@
 
     <data>
 
+        <variable
+            name="viewModel"
+            type="com.calcmarket.viewmodels.BuysViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,12 +32,12 @@
             android:layout_height="0dp"
             android:padding="@dimen/padding"
             android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/last_login"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView"
             tools:itemCount="20"
-            tools:listitem="@layout/item_buy"/>
+            tools:listitem="@layout/item_buy" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/newBuy"
@@ -46,6 +49,17 @@
             android:src="@android:drawable/ic_input_add"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/last_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dimen_10"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="@{viewModel.lastLogin}"
+            tools:text="Miercoles 16/Jun/2023" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -5,6 +5,8 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.calcmarket.R
+import com.calcmarket.core.PreferencesHelper
 import com.calcmarket.data.local.entities.BuyEntity
 import com.calcmarket.data.usecase.BuyUseCase
 import com.calcmarket.ui.binds.BuyBinding
@@ -15,12 +17,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class BuysViewModel @Inject constructor(
-    private val buyUseCase: BuyUseCase
+    private val buyUseCase: BuyUseCase,
+    private val preferencesHelper: PreferencesHelper
 ) : ViewModel() {
 
     private val _fullBuysMutableLiveData = MutableLiveData<List<BuyBinding>>()
@@ -39,6 +43,11 @@ class BuysViewModel @Inject constructor(
         }
     }
     val productsByBuyLiveData: LiveData<List<ProductBinding>> get() = _productsByBuyLiveData
+
+    private val _lastLogin: MutableLiveData<String> = MutableLiveData(
+        preferencesHelper.context.getString(R.string.las_login, formatDate(preferencesHelper.lastLogin))
+    )
+    val lastLogin: LiveData<String> = _lastLogin
 
     fun buySelectedSet(buy: BuyBinding) {
         _buySelectedMutableLiveData.value = buy
@@ -129,6 +138,29 @@ class BuysViewModel @Inject constructor(
                 onSuccess.invoke()
             }
         }
+    }
+
+    fun updateLastLogin() {
+
+        preferencesHelper.lastLogin = System.currentTimeMillis()
+
+    }
+
+
+    private fun formatDate(timestamp: Long): String {
+        val sdfDayOfWeek = SimpleDateFormat("EEEE", Locale("es", "ES"))
+        val dayOfWeek = sdfDayOfWeek.format(Date(timestamp))
+
+        val sdfDay = SimpleDateFormat("d", Locale("es", "ES"))
+        val day = sdfDay.format(Date(timestamp))
+
+        val sdfMonth = SimpleDateFormat("MMM", Locale("es", "ES"))
+        val month = sdfMonth.format(Date(timestamp))
+
+        val sdfYear = SimpleDateFormat("yyyy", Locale("es", "ES"))
+        val year = sdfYear.format(Date(timestamp))
+
+        return "$dayOfWeek $day/$month/$year"
     }
 
 }
