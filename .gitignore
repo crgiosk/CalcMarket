@@ -80,3 +80,4 @@ local.properties
 build.gradle.bak
 app/.gitignore.bak
 app/build.gradle.bak
+.idea/*
