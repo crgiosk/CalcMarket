@@ -30,14 +30,16 @@ class BuysViewModel @Inject constructor(
     private val _fullBuysMutableLiveData = MutableLiveData<List<BuyBinding>>()
     val fullBuysMutableLiveData: LiveData<List<BuyBinding>> = _fullBuysMutableLiveData
 
-    private val _buySelectedMutableLiveData = MutableLiveData<BuyBinding>()
-    val buySelectedLiveData: LiveData<BuyBinding> = _buySelectedMutableLiveData
+    private val _buySelectedMutableLiveData = MutableLiveData<BuyBinding?>()
+    val buySelectedLiveData: LiveData<BuyBinding?> = _buySelectedMutableLiveData
 
     private val _productsByBuyLiveData = MediatorLiveData<List<ProductBinding>>().apply {
         addSource(buySelectedLiveData) { myBuy ->
             viewModelScope.launch {
-                buyUseCase.getProductsByBuy(myBuy.id).collect { products ->
-                    value =  products.map { it.toBinding() }
+                myBuy?.let { buy ->
+                    buyUseCase.getProductsByBuy(buy.id).collect { products ->
+                        value =  products.map { it.toBinding() }
+                    }
                 }
             }
         }
@@ -138,6 +140,7 @@ class BuysViewModel @Inject constructor(
                 onSuccess.invoke()
             }
         }
+        _buySelectedMutableLiveData.value = null
     }
 
     fun updateLastLogin() {
