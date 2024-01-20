@@ -24,6 +24,7 @@ import com.calcmarket.ui.adapter.ProductAutoCompleteAdapter
 import com.calcmarket.ui.binds.ProductBinding
 import com.calcmarket.viewmodels.BuysViewModel
 import com.calcmarket.viewmodels.ProductViewModel
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -32,6 +33,8 @@ class NewBuyFragment : Fragment() {
 
     @Inject
     lateinit var confirmDialog: DialogConfirm
+
+    private val firebase = FirebaseCrashlytics.getInstance()
 
     private val viewModel: BuysViewModel by activityViewModels()
     private val productViewModel: ProductViewModel by activityViewModels()
@@ -231,7 +234,7 @@ class NewBuyFragment : Fragment() {
             }
         } else {
             editTexts.filter { it.text.toString().isEmpty() }.forEach {
-                it.error = "Rellenar esta opcion."
+                it.error = getString(R.string.complete_this_input)
             }
         }
     }

@@ -70,8 +70,11 @@ class ProductAutoCompleteAdapter(
 
         override fun publishResults(constraint: CharSequence?, result: FilterResults?) {
             items.clear()
-            result?.let {
-                items.addAll(it.values as ArrayList<ProductBinding>)
+            result?.values?.let {
+                if (it is ArrayList<*>) {
+                    @Suppress("UNCHECKED_CAST")
+                    items.addAll(it as? ArrayList<ProductBinding> ?: emptyList())
+                }
                 if (items.isEmpty()) {
                     clickClosure()
                     notifyDataSetInvalidated()
