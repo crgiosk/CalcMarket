@@ -27,5 +27,6 @@
     <string name="title_button_cancel">Cancelar</string>
     <string name="title_button_delete">Eliminar</string>
     <string name="las_login">"Última ingreso: %1$s"</string>
+    <string name="complete_this_input">Rellenar esta opcion.</string>
 
 </resources>
