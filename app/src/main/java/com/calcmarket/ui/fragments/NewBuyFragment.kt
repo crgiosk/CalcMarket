@@ -224,6 +224,12 @@ class NewBuyFragment : Fragment() {
             val value = removeCoinSymbol(binding.valueEditText.text.toString()).toInt()
             val nameProduct = binding.nameProduct.text?.toString() ?: String()
             val amount = binding.amountEditText.text?.toString()?.toInt() ?: 0
+
+            firebase.setCustomKey("name_product", nameProduct)
+            firebase.setCustomKey("cost_product", value)
+            firebase.setCustomKey("amount_product", amount)
+            firebase.sendUnsentReports()
+
             productViewModel.getProductByName(nameProduct) { product ->
                 if (product != null ) {
                     processExistProduct(product, total, value, amount)
