@@ -42,10 +42,6 @@ class NewBuyFragment : Fragment() {
     private lateinit var binding: FragmentNewBuyBinding
     private val buyAdapter: BuyAdapter by lazy {
         BuyAdapter(
-            onChangeTotal = {
-                binding.totalBuy.text = buildCoinFormat(it)
-                binding.buttonSaveBuy.isVisible = it > 0
-            },
             onUpdateProduct = {
                 viewModel.updateItemBuy(it)
             },
@@ -106,7 +102,8 @@ class NewBuyFragment : Fragment() {
         }
 
         viewModel.productsByBuyLiveData.observe(viewLifecycleOwner) { products ->
-            buyAdapter.mySubmitList(products)
+            buyAdapter.submitList(products)
+            updateAndShowTotalValue(products.sumOf { it.total })
         }
     }
 
@@ -176,7 +173,7 @@ class NewBuyFragment : Fragment() {
                 message = requireContext().getString(R.string.are_you_sure),
                 onPositiveButton = {
                     viewModel.buySelectedLiveData.value?.let { buy ->
-                        viewModel.updateItemsBuy(buy.id, buyAdapter.getData())
+                        viewModel.updateItemsBuy(buy.id, buyAdapter.currentList)
                         requireActivity().onBackPressed()
                     }
                 }
@@ -300,6 +297,11 @@ class NewBuyFragment : Fragment() {
         binding.totalEditText.setText(
             buildCoinFormat(count.toInt() * itemValue.toInt())
         )
+    }
+
+    private fun updateAndShowTotalValue(it: Int) {
+        binding.totalBuy.text = buildCoinFormat(it)
+        binding.buttonSaveBuy.isVisible = it > 0
     }
 
 }

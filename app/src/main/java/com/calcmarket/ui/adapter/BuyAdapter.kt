@@ -2,26 +2,35 @@ package com.calcmarket.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import com.calcmarket.core.BaseViewHolder
 import com.calcmarket.core.Extensions
 import com.calcmarket.databinding.ItemProductBinding
 import com.calcmarket.ui.binds.ProductBinding
 
+private object ProductDiffCallback : DiffUtil.ItemCallback<ProductBinding>() {
+    override fun areItemsTheSame(oldItem: ProductBinding, newItem: ProductBinding): Boolean {
+        return oldItem.id == newItem.id
+    }
+
+    override fun areContentsTheSame(oldItem: ProductBinding, newItem: ProductBinding): Boolean {
+        return oldItem == newItem
+    }
+}
+
 class BuyAdapter(
-    val onChangeTotal: (Int) -> Unit,
     val onUpdateProduct: (ProductBinding) -> Unit,
     val onDeleteProduct: (ProductBinding) -> Unit
-) : RecyclerView.Adapter<BuyAdapter.ViewHolder>() {
+) : ListAdapter<ProductBinding, BuyAdapter.ViewHolder>(ProductDiffCallback) {
 
-    private val items: MutableList<ProductBinding> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = ViewHolder(
         ItemProductBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(getItem(position))
     }
 
     inner class ViewHolder(private val binding: ItemProductBinding) : BaseViewHolder<ProductBinding>(binding.root) {
@@ -34,63 +43,36 @@ class BuyAdapter(
             binding.totalEditText.setText(Extensions.buildCoinFormat(model.total))
 
             binding.deleteProduct.setOnClickListener {
-                removeItemAtPosition(adapterPosition)
+                removeItemAtPosition(model)
             }
 
             binding.removeImageButton.setOnClickListener {
-
                 if (model.amount > 1) {
-
                     val cant = model.amount - 1
                     val newTotal = model.costItem * cant
-                    updateItemPosition(model, cant, newTotal, adapterPosition)
+                    updateItemPosition(model, cant, newTotal)
                 }
             }
 
             binding.addImageButton.setOnClickListener {
-
                 val cant = model.amount + 1
                 val newTotal = model.costItem * cant
-
-                items.find { it.id == model.id }?.let {
-                    it.amount = cant
-                    it.total = newTotal
-                    updateItemPosition(model, cant, newTotal, adapterPosition)
-                }
+                updateItemPosition(model, cant, newTotal)
             }
         }
     }
 
-    override fun getItemCount(): Int = items.count()
-
-    fun getData() = items
-
-    fun mySubmitList(list: List<ProductBinding>) {
-        items.clear()
-        items.addAll(list)
-        notifyItemRangeChanged(0, list.count())
-        notifyChangeTotalBuy()
+    private fun removeItemAtPosition(model: ProductBinding) {
+        onDeleteProduct.invoke(model)
     }
 
-    private fun removeItemAtPosition(position: Int) {
-        onDeleteProduct(items[position])
-        items.removeAt(position)
-        notifyChangeTotalBuy()
-    }
-
-    private fun updateItemPosition(model: ProductBinding, cant: Int, newTotal: Int, position: Int) {
-        items.find { it.id == model.id }?.let {
-            it.amount = cant
-            it.total = newTotal
-            onUpdateProduct(it)
-            notifyChangeTotalBuy()
+    private fun updateItemPosition(model: ProductBinding, cant: Int, newTotal: Int) {
+        val item: ProductBinding = model.copy()
+        item.apply {
+            amount = cant
+            total = newTotal
+            onUpdateProduct.invoke(this)
         }
-    }
-
-    private fun notifyChangeTotalBuy() {
-        onChangeTotal(
-            items.sumOf { it.total }
-        )
     }
 
 }
