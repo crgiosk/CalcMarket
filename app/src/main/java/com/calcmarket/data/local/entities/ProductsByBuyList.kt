@@ -1,7 +1,7 @@
 package com.calcmarket.data.local.entities
 
 import androidx.room.ColumnInfo
-import com.calcmarket.ui.binds.ProductBinding
+import com.calcmarket.ui.binds.ProductsBuyBinding
 
 data class ProductsByBuyList(
     @ColumnInfo(name = ProductEntity.NAME_COLUMN_ID)
@@ -21,8 +21,8 @@ data class ProductsByBuyList(
 
 ) {
 
-    fun toBinding(): ProductBinding {
-        return ProductBinding(
+    fun toBinding(): ProductsBuyBinding {
+        return ProductsBuyBinding(
             id = productId,
             productBuyId = productBuyId,
             name = name,

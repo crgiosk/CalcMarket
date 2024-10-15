@@ -10,7 +10,7 @@ import com.calcmarket.core.PreferencesHelper
 import com.calcmarket.data.local.entities.BuyEntity
 import com.calcmarket.data.usecase.BuyUseCase
 import com.calcmarket.ui.binds.BuyBinding
-import com.calcmarket.ui.binds.ProductBinding
+import com.calcmarket.ui.binds.ProductsBuyBinding
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,7 +33,7 @@ class BuysViewModel @Inject constructor(
     private val _buySelectedMutableLiveData = MutableLiveData<BuyBinding?>()
     val buySelectedLiveData: LiveData<BuyBinding?> = _buySelectedMutableLiveData
 
-    private val _productsByBuyLiveData = MediatorLiveData<List<ProductBinding>>().apply {
+    private val _productsByBuyLiveData = MediatorLiveData<List<ProductsBuyBinding>>().apply {
         addSource(buySelectedLiveData) { myBuy ->
             viewModelScope.launch {
                 myBuy?.let { buy ->
@@ -44,7 +44,7 @@ class BuysViewModel @Inject constructor(
             }
         }
     }
-    val productsByBuyLiveData: LiveData<List<ProductBinding>> get() = _productsByBuyLiveData
+    val productsByBuyLiveData: LiveData<List<ProductsBuyBinding>> get() = _productsByBuyLiveData
 
     private val _lastLogin: MutableLiveData<String> = MutableLiveData(
         preferencesHelper.context.getString(R.string.las_login, formatDate(preferencesHelper.lastLogin))
@@ -94,7 +94,7 @@ class BuysViewModel @Inject constructor(
         }
     }
 
-    fun updateItemBuy(product: ProductBinding) {
+    fun updateItemBuy(product: ProductsBuyBinding) {
         viewModelScope.launch(Dispatchers.IO) {
             buySelectedLiveData.value?.let {
                 buyUseCase.updateCostAmountItemBuy(
@@ -104,7 +104,7 @@ class BuysViewModel @Inject constructor(
         }
     }
 
-    fun deleteItemBuy(product: ProductBinding) {
+    fun deleteItemBuy(product: ProductsBuyBinding) {
         viewModelScope.launch(Dispatchers.IO) {
             buySelectedLiveData.value?.let {
                 buyUseCase.deleteItemBuy(
@@ -114,7 +114,7 @@ class BuysViewModel @Inject constructor(
         }
     }
 
-    fun updateItemsBuy(idBuy: Int, items: MutableList<ProductBinding>) {
+    fun updateItemsBuy(idBuy: Int, items: MutableList<ProductsBuyBinding>) {
 
         viewModelScope.launch(Dispatchers.IO) {
             buyUseCase.updateItemsAndCostItemsBuy(
@@ -125,7 +125,7 @@ class BuysViewModel @Inject constructor(
         }
     }
 
-    fun saveProductBuy(product: ProductBinding) {
+    fun saveProductBuy(product: ProductsBuyBinding) {
         viewModelScope.launch(Dispatchers.IO) {
             buyUseCase.saveProductsByBuy(
                 listOf(product.toEntity(buySelectedLiveData.value?.id ?: -1))

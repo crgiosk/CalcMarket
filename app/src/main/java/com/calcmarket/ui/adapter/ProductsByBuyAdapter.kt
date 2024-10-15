@@ -5,13 +5,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.calcmarket.core.BaseViewHolder
 import com.calcmarket.databinding.ItemChildProductBinding
-import com.calcmarket.ui.binds.ProductBinding
+import com.calcmarket.ui.binds.ProductsBuyBinding
 
 class ProductsByBuyAdapter : RecyclerView.Adapter<ProductsByBuyAdapter.ViewHolder>() {
 
-    private val items = mutableListOf<ProductBinding>()
+    private val items = mutableListOf<ProductsBuyBinding>()
 
-    fun updateData(data: List<ProductBinding>) {
+    fun updateData(data: List<ProductsBuyBinding>) {
         items.clear()
         items.addAll(data)
         notifyItemRangeChanged(0, items.count())
@@ -30,9 +30,9 @@ class ProductsByBuyAdapter : RecyclerView.Adapter<ProductsByBuyAdapter.ViewHolde
     }
 
 
-    inner class ViewHolder(private val myView: ItemChildProductBinding) : BaseViewHolder<ProductBinding>(myView.root) {
+    inner class ViewHolder(private val myView: ItemChildProductBinding) : BaseViewHolder<ProductsBuyBinding>(myView.root) {
 
-        override fun bind(model: ProductBinding) {
+        override fun bind(model: ProductsBuyBinding) {
             myView.product = model
         }
     }

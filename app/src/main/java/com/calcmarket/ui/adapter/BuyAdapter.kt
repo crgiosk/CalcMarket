@@ -6,15 +6,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.calcmarket.core.BaseViewHolder
 import com.calcmarket.core.Extensions
 import com.calcmarket.databinding.ItemProductBinding
-import com.calcmarket.ui.binds.ProductBinding
+import com.calcmarket.ui.binds.ProductsBuyBinding
 
 class BuyAdapter(
     val onChangeTotal: (Int) -> Unit,
-    val onUpdateProduct: (ProductBinding) -> Unit,
-    val onDeleteProduct: (ProductBinding) -> Unit
+    val onUpdateProduct: (ProductsBuyBinding) -> Unit,
+    val onDeleteProduct: (ProductsBuyBinding) -> Unit
 ) : RecyclerView.Adapter<BuyAdapter.ViewHolder>() {
 
-    private val items: MutableList<ProductBinding> = mutableListOf()
+    private val items: MutableList<ProductsBuyBinding> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = ViewHolder(
         ItemProductBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -24,9 +24,9 @@ class BuyAdapter(
         holder.bind(items[position])
     }
 
-    inner class ViewHolder(private val binding: ItemProductBinding) : BaseViewHolder<ProductBinding>(binding.root) {
+    inner class ViewHolder(private val binding: ItemProductBinding) : BaseViewHolder<ProductsBuyBinding>(binding.root) {
 
-        override fun bind(model: ProductBinding) {
+        override fun bind(model: ProductsBuyBinding) {
 
             binding.nameProduct.setText(model.name)
             binding.amountEditText.text = model.amount.toString()
@@ -65,7 +65,7 @@ class BuyAdapter(
 
     fun getData() = items
 
-    fun mySubmitList(list: List<ProductBinding>) {
+    fun mySubmitList(list: List<ProductsBuyBinding>) {
         items.clear()
         items.addAll(list)
         notifyItemRangeChanged(0, list.count())
@@ -78,7 +78,7 @@ class BuyAdapter(
         notifyChangeTotalBuy()
     }
 
-    private fun updateItemPosition(model: ProductBinding, cant: Int, newTotal: Int, position: Int) {
+    private fun updateItemPosition(model: ProductsBuyBinding, cant: Int, newTotal: Int, position: Int) {
         items.find { it.id == model.id }?.let {
             it.amount = cant
             it.total = newTotal

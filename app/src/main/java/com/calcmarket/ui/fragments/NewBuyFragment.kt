@@ -21,7 +21,7 @@ import com.calcmarket.data.local.di.DialogConfirm
 import com.calcmarket.databinding.FragmentNewBuyBinding
 import com.calcmarket.ui.adapter.BuyAdapter
 import com.calcmarket.ui.adapter.ProductAutoCompleteAdapter
-import com.calcmarket.ui.binds.ProductBinding
+import com.calcmarket.ui.binds.ProductsBuyBinding
 import com.calcmarket.viewmodels.BuysViewModel
 import com.calcmarket.viewmodels.ProductViewModel
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -92,7 +92,7 @@ class NewBuyFragment : Fragment() {
         }
 
         binding.nameProduct.setAdapter(autoCompleteAdapter)
-        productViewModel.currentProduct = ProductBinding()
+        productViewModel.currentProduct = ProductsBuyBinding()
     }
 
     private fun setDefaultFocus() {
@@ -205,7 +205,7 @@ class NewBuyFragment : Fragment() {
         })
 
         binding.nameProduct.setOnItemClickListener { parent, _, position, _ ->
-            val itemSelected = parent.getItemAtPosition(position) as ProductBinding
+            val itemSelected = parent.getItemAtPosition(position) as ProductsBuyBinding
             binding.nameProduct.setText(itemSelected.name)
             binding.nameProduct.setSelection(binding.nameProduct.text.length)
             binding.valueEditText.requestFocus()
@@ -259,7 +259,7 @@ class NewBuyFragment : Fragment() {
         total: Int,
         value: Int
     ) {
-        productViewModel.currentProduct = ProductBinding(
+        productViewModel.currentProduct = ProductsBuyBinding(
             name = nameProduct,
             amount = amount,
             total = total,
@@ -272,7 +272,7 @@ class NewBuyFragment : Fragment() {
     }
 
     private fun processExistProduct(
-        product: ProductBinding,
+        product: ProductsBuyBinding,
         total: Int,
         value: Int,
         amount: Int
@@ -289,7 +289,7 @@ class NewBuyFragment : Fragment() {
 
     private fun saveProductToBuy() {
         viewModel.saveProductBuy(productViewModel.currentProduct)
-        productViewModel.currentProduct = ProductBinding()
+        productViewModel.currentProduct = ProductsBuyBinding()
     }
 
     private fun calculateAndShowPrice() {

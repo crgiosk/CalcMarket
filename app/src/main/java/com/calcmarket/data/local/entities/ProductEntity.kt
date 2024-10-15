@@ -3,7 +3,7 @@ package com.calcmarket.data.local.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.calcmarket.ui.binds.ProductBinding
+import com.calcmarket.ui.binds.ProductsBuyBinding
 
 @Entity(tableName = ProductEntity.NAME_TABLE)
 data class ProductEntity(
@@ -21,7 +21,7 @@ data class ProductEntity(
     val isFavorite: Boolean = false
 
 ) {
-    fun toBinding() = ProductBinding(
+    fun toBinding() = ProductsBuyBinding(
         id = id,
         name = name,
         costItem = costProduct

@@ -1,9 +1,8 @@
 package com.calcmarket.ui.binds
 
-import com.calcmarket.data.local.entities.ProductEntity
 import com.calcmarket.data.local.entities.ProductsByBuyEntity
 
-data class ProductBinding(
+data class ProductsBuyBinding(
     var id: Int = 0,
     var productBuyId: Int = 0,
     val name: String = "",

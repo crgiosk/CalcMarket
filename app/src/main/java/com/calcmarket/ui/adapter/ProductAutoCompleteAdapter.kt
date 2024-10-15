@@ -7,7 +7,7 @@ import android.widget.BaseAdapter
 import android.widget.Filter
 import android.widget.Filterable
 import com.calcmarket.databinding.LayoutAutoCompleteProductBinding
-import com.calcmarket.ui.binds.ProductBinding
+import com.calcmarket.ui.binds.ProductsBuyBinding
 import java.util.Locale
 import kotlin.collections.ArrayList
 
@@ -15,10 +15,10 @@ class ProductAutoCompleteAdapter(
     val clickClosure: () -> Unit
 ) : BaseAdapter(), Filterable {
 
-    private var items: MutableList<ProductBinding> = mutableListOf()
+    private var items: MutableList<ProductsBuyBinding> = mutableListOf()
     private val filter = AutoCompleteFilter()
 
-    fun updateItems(list: List<ProductBinding>) {
+    fun updateItems(list: List<ProductsBuyBinding>) {
         items.clear()
         items.addAll(list)
         notifyDataSetChanged()
@@ -51,7 +51,7 @@ class ProductAutoCompleteAdapter(
                 filterResult.values = items
                 filterResult.count = items.count()
             } else {
-                val newValues = ArrayList<ProductBinding>()
+                val newValues = ArrayList<ProductsBuyBinding>()
                 for (item in items) {
                     if (
                         item.name.lowercase(Locale.ROOT)
@@ -73,7 +73,7 @@ class ProductAutoCompleteAdapter(
             result?.values?.let {
                 if (it is ArrayList<*>) {
                     @Suppress("UNCHECKED_CAST")
-                    items.addAll(it as? ArrayList<ProductBinding> ?: emptyList())
+                    items.addAll(it as? ArrayList<ProductsBuyBinding> ?: emptyList())
                 }
                 if (items.isEmpty()) {
                     clickClosure()
