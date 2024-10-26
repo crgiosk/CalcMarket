@@ -77,6 +77,7 @@ class NewBuyFragment : Fragment() {
         setupObservers()
         setDefaultFocus()
         validateExistBuy()
+        loadFirebaseProducts()
     }
 
     private fun validateExistBuy() {
@@ -122,7 +123,7 @@ class NewBuyFragment : Fragment() {
 
                 if (itemValue.isNotEmpty()) {
                     if (count == "$" || count.isEmpty() || count.isBlank() || count == "" || count == "0") {
-                        binding.totalEditText.setText("")
+                        binding.totalEditText.text?.clear()
                     } else {
                         calculateAndShowPrice()
                     }
@@ -143,7 +144,7 @@ class NewBuyFragment : Fragment() {
 
                 binding.valueEditText.removeTextChangedListener(this)
                 if (text == "$" || text == "" || text == "0") {
-                    binding.valueEditText.setText("")
+                    binding.valueEditText.text?.clear()
                 } else {
                     binding.valueEditText.setText(
                         buildCoinFormat(text.toInt())
@@ -155,7 +156,7 @@ class NewBuyFragment : Fragment() {
                         calculateAndShowPrice()
 
                     } else {
-                        binding.totalEditText.setText("")
+                        binding.totalEditText.text?.clear()
                     }
                 }
                 binding.valueEditText.addTextChangedListener(this)
@@ -195,7 +196,7 @@ class NewBuyFragment : Fragment() {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (p0?.isNotEmpty() == true){
+                if (p0?.isNotEmpty() == true) {
                     productViewModel.getProductByQuery(p0.toString())
                 }
             }
@@ -231,7 +232,7 @@ class NewBuyFragment : Fragment() {
             firebase.sendUnsentReports()
 
             productViewModel.getProductByName(nameProduct) { product ->
-                if (product != null ) {
+                if (product != null) {
                     processExistProduct(product, total, value, amount)
                 } else {
                     processNotExistProduct(nameProduct, amount, total, value)
@@ -247,7 +248,7 @@ class NewBuyFragment : Fragment() {
 
     private fun clearAndResetForm(editTexts: List<EditText>) {
         editTexts.forEach { editText ->
-            editText.setText("")
+            editText.text?.clear()
         }
         binding.recyclerViewOrders.smoothScrollToPosition(buyAdapter.itemCount)
         binding.nameProduct.requestFocus()
@@ -265,10 +266,6 @@ class NewBuyFragment : Fragment() {
             total = total,
             costItem = value,
         )
-        productViewModel.newProduct {
-            productViewModel.currentProduct.id = it
-            saveProductToBuy()
-        }
     }
 
     private fun processExistProduct(
@@ -296,10 +293,14 @@ class NewBuyFragment : Fragment() {
 
         val count = removeCoinSymbol(binding.amountEditText.text.toString())
         val itemValue = removeCoinSymbol(binding.valueEditText.text.toString())
-        binding.totalEditText.setText("")
+        binding.totalEditText.text?.clear()
         binding.totalEditText.setText(
             buildCoinFormat(count.toInt() * itemValue.toInt())
         )
+    }
+
+    private fun loadFirebaseProducts() {
+        productViewModel.loadProducts()
     }
 
 }

@@ -20,6 +20,12 @@ class FirebaseProductsService @Inject constructor(
         private const val PATH_PRODUCTS = "productos"
     }
 
+    fun sendMessageToFirebase(productsFBRDTO: ProductsFRBDTO) {
+        //remove this from commit with ammed
+        val productsObject = getPathProducts().push()
+        productsObject.setValue(productsFBRDTO)
+    }
+
     fun subscribeAndGetToProducts(): Flow<List<ProductsFBResponse>> {
         val products = getPathProducts().snapshots.map { snapShot ->
             snapShot.children.mapNotNull {

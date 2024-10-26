@@ -53,10 +53,7 @@ class ProductAutoCompleteAdapter(
             } else {
                 val newValues = ArrayList<ProductsBuyBinding>()
                 for (item in items) {
-                    if (
-                        item.name.lowercase(Locale.ROOT)
-                            .contains(constraint.toString().lowercase(Locale.ROOT))
-                    ) {
+                    if (item.name.contains(constraint.toString(), true)) {
                         newValues.add(item)
                     }
 
