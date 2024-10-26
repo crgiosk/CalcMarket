@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "293478930997",
+    "firebase_url": "https://calckmarket-default-rtdb.firebaseio.com",
     "project_id": "calckmarket",
     "storage_bucket": "calckmarket.appspot.com"
   },
