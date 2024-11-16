@@ -7,7 +7,9 @@ data class ProductBinding(
     val name: String = "",
     var costItem: Int = 0,
     val isFavorite: Boolean = false,
-    val idFireBase: String = ""
+    val idFireBase: String = "",
+    var type: String = "",
+    var measure: String = "",
 ) {
     override fun toString(): String {
         return "id = $id\n" +
@@ -19,10 +21,11 @@ data class ProductBinding(
 
     fun toDTO(): ProductsFRBDTO {
         return ProductsFRBDTO(
-            id = id,
-            name = "name",
-            //costItem = costItem.toString(),
+            name = name,
+            type = type,
+            costItem = costItem.toDouble(),
             isFavorite = isFavorite,
+            unitMeasure = measure
         )
     }
 
@@ -30,7 +33,9 @@ data class ProductBinding(
         return ProductsBuyBinding(
             name = name,
             costItem = costItem,
-            isFavorite = isFavorite
+            isFavorite = isFavorite,
+            type = type,
+            measure = measure
         )
     }
 }

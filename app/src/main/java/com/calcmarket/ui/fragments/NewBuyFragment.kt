@@ -209,6 +209,8 @@ class NewBuyFragment : Fragment() {
             val itemSelected = parent.getItemAtPosition(position) as ProductsBuyBinding
             binding.nameProduct.setText(itemSelected.name)
             binding.nameProduct.setSelection(binding.nameProduct.text.length)
+            binding.typeProductEditText.setText(itemSelected.type)
+            binding.measureProductEditText.setText(itemSelected.measure)
             binding.valueEditText.requestFocus()
 
             productViewModel.currentProduct = itemSelected
@@ -219,12 +221,13 @@ class NewBuyFragment : Fragment() {
     }
 
     private fun addProduct() {
-        val editTexts = binding.formInputs.touchables.filterIsInstance<EditText>()
-        if (editTexts.none { it.text.isEmpty() }) {
+        if (checkIsValidNameAndType() && checkIsValidOthersInputs()) {
             val total = removeCoinSymbol(binding.totalEditText.text.toString()).toInt()
             val value = removeCoinSymbol(binding.valueEditText.text.toString()).toInt()
             val nameProduct = binding.nameProduct.text?.toString() ?: String()
             val amount = binding.amountEditText.text?.toString()?.toInt() ?: 0
+            val type = binding.typeProductEditText.text?.toString() ?: ""
+            val measure = binding.measureProductEditText.text?.toString() ?: ""
 
             firebase.setCustomKey("name_product", nameProduct)
             firebase.setCustomKey("cost_product", value)
@@ -236,14 +239,72 @@ class NewBuyFragment : Fragment() {
                     processExistProduct(product, total, value, amount)
                 } else {
                     processNotExistProduct(nameProduct, amount, total, value)
+                    saveProductInFB(nameProduct, value, type, measure, false)
                 }
-                clearAndResetForm(editTexts)
-            }
-        } else {
-            editTexts.filter { it.text.toString().isEmpty() }.forEach {
-                it.error = getString(R.string.complete_this_input)
+                clearAndResetForm(binding.formInputs.touchables.filterIsInstance<EditText>())
             }
         }
+    }
+
+    private fun checkIsValidOthersInputs(): Boolean {
+        return when {
+            (binding.valueEditText.text?.toString() ?: "").isEmpty() -> {
+                binding.valueEditText.error = getString(R.string.complete_this_input)
+                false
+            }
+
+            (binding.measureProductEditText.text?.toString() ?: "").isEmpty() -> {
+                binding.measureProductEditText.error = getString(R.string.complete_this_input)
+                false
+            }
+
+            (binding.amountEditText.text?.toString()?.toInt() ?: 0) == 0 -> {
+                binding.amountEditText.error = getString(R.string.complete_this_input)
+                false
+            }
+
+            else -> true
+        }
+    }
+
+    private fun checkIsValidNameAndType(): Boolean {
+        return when {
+            binding.nameProduct.text.isNullOrEmpty() -> {
+                if (binding.typeProductEditText.text.isNullOrEmpty()) {
+                    binding.nameProduct.error = getString(R.string.complete_this_input)
+                    false
+                } else {
+                    true
+                }
+            }
+
+            binding.typeProductEditText.text.isNullOrEmpty() -> {
+                if (binding.nameProduct.text.isNullOrEmpty()) {
+                    binding.typeProductEditText.error = getString(R.string.complete_this_input)
+                    false
+                } else {
+                    true
+                }
+            }
+
+            else -> true
+        }
+    }
+
+    private fun saveProductInFB(
+        nameProduct: String,
+        value: Int,
+        typeProduct: String = "",
+        measure: String,
+        isFavorite: Boolean
+    ) {
+        productViewModel.saveNewProductInFirebase(
+            name = nameProduct,
+            typeProduct = typeProduct,
+            costItem = value.toDouble(),
+            isFavorite = isFavorite,
+            measure = measure,
+        )
     }
 
     private fun clearAndResetForm(editTexts: List<EditText>) {
@@ -281,7 +342,7 @@ class NewBuyFragment : Fragment() {
             this.costItem = value
             this.amount = amount
         }
-        saveProductToBuy()
+        //saveProductToBuy()
     }
 
     private fun saveProductToBuy() {

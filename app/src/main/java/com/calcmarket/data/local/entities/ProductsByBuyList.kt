@@ -29,7 +29,8 @@ data class ProductsByBuyList(
             costItem = costProduct,
             amount = amount,
             total = total,
-            isFavorite = isFavorite
+            isFavorite = isFavorite,
+            "", ""
         )
     }
 

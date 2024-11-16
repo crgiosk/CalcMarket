@@ -8,30 +8,38 @@ import android.widget.Filter
 import android.widget.Filterable
 import com.calcmarket.databinding.LayoutAutoCompleteProductBinding
 import com.calcmarket.ui.binds.ProductsBuyBinding
-import java.util.Locale
 import kotlin.collections.ArrayList
 
 class ProductAutoCompleteAdapter(
-    val clickClosure: () -> Unit
+    private val clickClosure: () -> Unit
 ) : BaseAdapter(), Filterable {
 
     private var items: MutableList<ProductsBuyBinding> = mutableListOf()
-    private val filter = AutoCompleteFilter()
+    private var filteredItems: MutableList<ProductsBuyBinding> = mutableListOf()
+    private val mFilter = AutoCompleteFilter()
 
     fun updateItems(list: List<ProductsBuyBinding>) {
         items.clear()
         items.addAll(list)
+        filteredItems.clear()
+        filteredItems.addAll(list)
         notifyDataSetChanged()
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val view = LayoutAutoCompleteProductBinding.inflate(LayoutInflater.from(parent?.context), parent, false)
-        view.nameProduct.text = items[position].name
+        val layoutInflater = LayoutInflater.from(parent?.context)
+        val view = LayoutAutoCompleteProductBinding.inflate(layoutInflater, parent, false)
+        val item = filteredItems[position]
+        view.nameProduct.text = buildString {
+            append(item.type)
+            append(" ")
+            append(item.name)
+        }
         return view.root
     }
 
     override fun getItem(position: Int): Any {
-        return items[position]
+        return filteredItems[position]
     }
 
     override fun getItemId(position: Int): Long {
@@ -39,40 +47,35 @@ class ProductAutoCompleteAdapter(
     }
 
     override fun getCount(): Int {
-        return items.count()
+        return filteredItems.count()
     }
 
-    override fun getFilter(): Filter = filter
+    override fun getFilter(): Filter = mFilter
 
     private inner class AutoCompleteFilter : Filter() {
         override fun performFiltering(constraint: CharSequence?): FilterResults {
-            val filterResult = FilterResults()
+            val filterResults = FilterResults()
             if (constraint.isNullOrEmpty()) {
-                filterResult.values = items
-                filterResult.count = items.count()
+                filterResults.values = items
+                filterResults.count = items.count()
             } else {
-                val newValues = ArrayList<ProductsBuyBinding>()
-                for (item in items) {
-                    if (item.name.contains(constraint.toString(), true)) {
-                        newValues.add(item)
-                    }
-
+                val query = constraint.toString().lowercase()
+                val matchedValues = items.filter { item ->
+                    val isValidName = item.name.contains(query, ignoreCase = true)
+                    val isValidType = item.type.contains(query, ignoreCase = true)
+                    isValidName || isValidType
                 }
 
-                filterResult.values = newValues
-                filterResult.count = newValues.count()
+                filterResults.values = matchedValues
+                filterResults.count = matchedValues.count()
             }
-            return filterResult
+            return filterResults
         }
 
         override fun publishResults(constraint: CharSequence?, result: FilterResults?) {
-            items.clear()
             result?.values?.let {
-                if (it is ArrayList<*>) {
-                    @Suppress("UNCHECKED_CAST")
-                    items.addAll(it as? ArrayList<ProductsBuyBinding> ?: emptyList())
-                }
-                if (items.isEmpty()) {
+                filteredItems = it as ArrayList<ProductsBuyBinding>
+                if (filteredItems.isEmpty()) {
                     clickClosure()
                     notifyDataSetInvalidated()
                 } else {

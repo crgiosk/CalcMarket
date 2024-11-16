@@ -20,8 +20,7 @@ class FirebaseProductsService @Inject constructor(
         private const val PATH_PRODUCTS = "productos"
     }
 
-    fun sendMessageToFirebase(productsFBRDTO: ProductsFRBDTO) {
-        //remove this from commit with ammed
+    fun saveNewProductToFirebase(productsFBRDTO: ProductsFRBDTO) {
         val productsObject = getPathProducts().push()
         productsObject.setValue(productsFBRDTO)
     }
