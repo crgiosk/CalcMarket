@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.calcmarket.viewmodels.BuysViewModel" />
+            type="com.calcmarket.viewmodels.BuyDetailViewModel" />
 
     </data>
 

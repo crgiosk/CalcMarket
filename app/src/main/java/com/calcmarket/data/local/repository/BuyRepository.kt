@@ -5,6 +5,7 @@ import com.calcmarket.data.local.entities.BuyEntity
 import com.calcmarket.data.local.entities.ProductsByBuyEntity
 import com.calcmarket.data.local.entities.ProductsByBuyList
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class BuyRepository @Inject constructor(
@@ -13,11 +14,39 @@ class BuyRepository @Inject constructor(
 
     fun saveLocalBuy(buyEntity: BuyEntity) = buyDAO.saveBuy(buyEntity)
 
-    fun saveProductsByBuy(products: List<ProductsByBuyEntity>) = buyDAO.saveProducts(products)
+    fun saveProductsByBuy(products: List<ProductsByBuyEntity>): Flow<LongArray> {
+        return flow {
+            emit(buyDAO.saveProducts(products))
+        }
+    }
 
-    suspend fun updateCostAmountItemBuy(product: ProductsByBuyEntity) = buyDAO.updateCostAmountItemBuy(product)
+    fun updateCostAmountItemBuy(product: ProductsByBuyEntity): Flow<Result<Boolean>> = flow {
+        try {
+            val rowsAffected = buyDAO.updateCostAmountItemBuy(product)
+            if (rowsAffected > 0) {
+                emit(Result.success(true)) // La operación fue exitosa
+            } else {
+                emit(Result.failure(Exception("Error unexpected"))) // Operación sin cambios
+            }
+        } catch (e: Exception) {
+            emit(Result.failure(e))
+        }
 
-    suspend fun deleteItemBuy(product: ProductsByBuyEntity) = buyDAO.deleteItemBuy(product)
+    }
+
+    fun deleteItemBuy(product: ProductsByBuyEntity): Flow<Result<Boolean>> = flow {
+        try {
+            val rowsAffected = buyDAO.deleteItemBuy(product)
+            if (rowsAffected > 0) {
+                emit(Result.success(true))
+            } else {
+                emit(Result.failure(Exception("Error unexpected")))
+            }
+        } catch (e: Exception) {
+            emit(Result.failure(e))
+        }
+
+    }
 
     fun getAllLocalBuy(): Flow<List<BuyEntity>> = buyDAO.getAllLocalBuy()
 

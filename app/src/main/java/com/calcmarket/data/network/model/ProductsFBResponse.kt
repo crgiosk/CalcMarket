@@ -14,7 +14,7 @@ data class ProductsFBResponse(
 
     fun toProductBinding(): ProductBinding {
         return ProductBinding(
-            id = id.orEmpty(),
+            id = 0,
             idFireBase = id.orEmpty(),
             name = name.orEmpty(),
             costItem = costItem?.toInt() ?: 0,

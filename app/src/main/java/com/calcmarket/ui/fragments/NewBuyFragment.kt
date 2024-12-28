@@ -11,6 +11,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.calcmarket.R
@@ -21,11 +22,14 @@ import com.calcmarket.data.local.di.DialogConfirm
 import com.calcmarket.databinding.FragmentNewBuyBinding
 import com.calcmarket.ui.adapter.BuyAdapter
 import com.calcmarket.ui.adapter.ProductAutoCompleteAdapter
+import com.calcmarket.ui.binds.ProductBinding
 import com.calcmarket.ui.binds.ProductsBuyBinding
-import com.calcmarket.viewmodels.BuysViewModel
+import com.calcmarket.viewmodels.NewBuyViewModel
 import com.calcmarket.viewmodels.ProductViewModel
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -36,17 +40,17 @@ class NewBuyFragment : Fragment() {
 
     private val firebase = FirebaseCrashlytics.getInstance()
 
-    private val viewModel: BuysViewModel by activityViewModels()
+    private val newBuyViewModel: NewBuyViewModel by activityViewModels()
     private val productViewModel: ProductViewModel by activityViewModels()
 
     private lateinit var binding: FragmentNewBuyBinding
     private val buyAdapter: BuyAdapter by lazy {
         BuyAdapter(
             onUpdateProduct = {
-                viewModel.updateItemBuy(it)
+                newBuyViewModel.updateItemBuy(it)
             },
             onDeleteProduct = {
-                viewModel.deleteItemBuy(it)
+                newBuyViewModel.deleteItemBuy(it)
             }
         )
     }
@@ -68,6 +72,7 @@ class NewBuyFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         setupUI()
         setupListeners()
         setupObservers()
@@ -77,8 +82,12 @@ class NewBuyFragment : Fragment() {
     }
 
     private fun validateExistBuy() {
-        if (viewModel.buySelectedLiveData.value == null) {
-            viewModel.createNewBuy()
+        newBuyViewModel.checkBuyInProgress {
+            if (it != null) {
+                newBuyViewModel.buySelectedSet(it)
+            } else {
+                newBuyViewModel.createNewBuy()
+            }
         }
     }
 
@@ -89,7 +98,7 @@ class NewBuyFragment : Fragment() {
         }
 
         binding.nameProduct.setAdapter(autoCompleteAdapter)
-        productViewModel.currentProduct = ProductsBuyBinding()
+        newBuyViewModel.currentProductSelected = ProductsBuyBinding()
     }
 
     private fun setDefaultFocus() {
@@ -98,13 +107,15 @@ class NewBuyFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        productViewModel.nameProductsLiveData().observe(viewLifecycleOwner) {
+        productViewModel.productsToShowBySearch().observe(viewLifecycleOwner) {
             if (isVisible) autoCompleteAdapter.updateItems(it)
         }
 
-        viewModel.productsByBuyLiveData.observe(viewLifecycleOwner) { products ->
+        newBuyViewModel.productsByBuyLiveData.observe(viewLifecycleOwner) { products ->
             buyAdapter.submitList(products)
-            updateAndShowTotalValue(products.sumOf { it.total })
+            val totalValue = products.sumOf { it.total }
+            updateAndShowTotalValue(totalValue)
+            updateDataBuy()
         }
     }
 
@@ -173,10 +184,8 @@ class NewBuyFragment : Fragment() {
             confirmDialog.showAlertConfirmationDialog(
                 message = requireContext().getString(R.string.are_you_sure),
                 onPositiveButton = {
-                    viewModel.buySelectedLiveData.value?.let { buy ->
-                        viewModel.updateItemsBuy(buy.id, buyAdapter.currentList)
-                        requireActivity().onBackPressed()
-                    }
+                    updateDataBuy()
+                    requireActivity().onBackPressed()
                 }
             )
         }
@@ -203,14 +212,14 @@ class NewBuyFragment : Fragment() {
         })
 
         binding.nameProduct.setOnItemClickListener { parent, _, position, _ ->
-            val itemSelected = parent.getItemAtPosition(position) as ProductsBuyBinding
+            val itemSelected = parent.getItemAtPosition(position) as ProductBinding
             binding.nameProduct.setText(itemSelected.name)
             binding.nameProduct.setSelection(binding.nameProduct.text.length)
             binding.typeProductEditText.setText(itemSelected.type)
             binding.measureProductEditText.setText(itemSelected.measure)
             binding.valueEditText.requestFocus()
 
-            productViewModel.currentProduct = itemSelected
+            newBuyViewModel.currentProductSelected = itemSelected.toProductsBuyBinding()
             binding.valueEditText.setText(
                 buildCoinFormat(itemSelected.costItem)
             )
@@ -219,33 +228,62 @@ class NewBuyFragment : Fragment() {
 
     private fun addProduct() {
         if (checkIsValidNameAndType() && checkIsValidOthersInputs()) {
-            val total = removeCoinSymbol(binding.totalEditText.text.toString()).toInt()
-            val value = removeCoinSymbol(binding.valueEditText.text.toString()).toInt()
-            val nameProduct = binding.nameProduct.text?.toString() ?: String()
-            val amount = binding.amountEditText.text?.toString()?.toInt() ?: 0
-            val type = binding.typeProductEditText.text?.toString() ?: ""
-            val measure = binding.measureProductEditText.text?.toString() ?: ""
+            val productsBuyBinding = createProductFromForm()
 
-            firebase.setCustomKey("name_product", nameProduct)
-            firebase.setCustomKey("cost_product", value)
-            firebase.setCustomKey("amount_product", amount)
-            firebase.sendUnsentReports()
-
-            productViewModel.getProductByName(nameProduct) { product ->
+            productViewModel.getLocalProductByName(productsBuyBinding.name) { product ->
                 if (product != null) {
-                    processExistProduct(product, total, value, amount)
+
+                    newBuyViewModel.updateProductSelectedData(
+                        product,
+                        productsBuyBinding.total,
+                        productsBuyBinding.costItem,
+                        productsBuyBinding.amount
+                    )
+                    newBuyViewModel.saveProductBuy(newBuyViewModel.currentProductSelected){
+                        clearAndResetForm()
+                    }
+                    sendTagsToFirebase(productsBuyBinding)
                 } else {
-                    processNotExistProduct(nameProduct, amount, total, value)
-                    saveProductInFB(nameProduct, value, type, measure, false)
+                    //showLoading
+                    saveProductInFB(productsBuyBinding)
                 }
-                clearAndResetForm(binding.formInputs.touchables.filterIsInstance<EditText>())
             }
         }
     }
 
+    private fun sendTagsToFirebase(productsBuyBinding: ProductsBuyBinding) {
+        firebase.setCustomKey("name_product", productsBuyBinding.name)
+        firebase.setCustomKey("cost_product", productsBuyBinding.costItem)
+        firebase.setCustomKey("amount_product", productsBuyBinding.amount)
+        firebase.sendUnsentReports()
+    }
+
+    private fun createProductFromForm(): ProductsBuyBinding {
+        val total = removeCoinSymbol(binding.totalEditText.text.toString()).toInt()
+        val value = removeCoinSymbol(binding.valueEditText.text.toString()).toInt()
+        val nameProduct = binding.nameProduct.text?.toString() ?: String()
+        val amount = binding.amountEditText.text?.toString()?.toInt() ?: 0
+        val type = binding.typeProductEditText.text?.toString() ?: ""
+        val measure = binding.measureProductEditText.text?.toString() ?: ""
+
+        return ProductsBuyBinding(
+            name = nameProduct,
+            costItem = value,
+            total = total,
+            amount = amount,
+            measure = measure,
+            type = type
+        )
+
+    }
+
     private fun checkIsValidOthersInputs(): Boolean {
+        val valueProduct = removeCoinSymbol(
+            binding.valueEditText.text.toString()
+        ).toIntOrNull() ?: 0
+
         return when {
-            (binding.valueEditText.text?.toString() ?: "").isEmpty() -> {
+            valueProduct <= 0 -> {
                 binding.valueEditText.error = getString(R.string.complete_this_input)
                 false
             }
@@ -255,7 +293,7 @@ class NewBuyFragment : Fragment() {
                 false
             }
 
-            (binding.amountEditText.text?.toString()?.toInt() ?: 0) == 0 -> {
+            (binding.amountEditText.text?.toString()?.toIntOrNull() ?: 0) <= 0 -> {
                 binding.amountEditText.error = getString(R.string.complete_this_input)
                 false
             }
@@ -288,63 +326,49 @@ class NewBuyFragment : Fragment() {
         }
     }
 
-    private fun saveProductInFB(
-        nameProduct: String,
-        value: Int,
-        typeProduct: String = "",
-        measure: String,
-        isFavorite: Boolean
-    ) {
+    private fun saveProductInFB(product: ProductsBuyBinding) {
+
         productViewModel.saveNewProductInFirebase(
-            name = nameProduct,
-            typeProduct = typeProduct,
-            costItem = value.toDouble(),
-            isFavorite = isFavorite,
-            measure = measure,
+            name = product.name,
+            typeProduct = product.type,
+            costItem = product.costItem.toDouble(),
+            isFavorite = product.isFavorite,
+            measure = product.measure,
+            onComplete = {
+
+                productViewModel.getLocalProductByName(product.name) { productSaved ->
+                    if (productSaved != null) {
+                        newBuyViewModel.updateProductSelectedData(
+                            product = productSaved,
+                            total = product.total,
+                            value = product.costItem,
+                            amount = product.amount
+                        )
+                        newBuyViewModel.saveProductBuy(newBuyViewModel.currentProductSelected) {
+                            clearAndResetForm()
+                        }
+                    }
+                }
+            }
         )
     }
 
-    private fun clearAndResetForm(editTexts: List<EditText>) {
-        editTexts.forEach { editText ->
-            editText.text?.clear()
+    private fun updateDataBuy() {
+
+        newBuyViewModel.buySelectedLiveData.value?.let { buy ->
+            newBuyViewModel.updateItemsBuy(buy.id, buyAdapter.currentList)
         }
-        binding.recyclerViewOrders.smoothScrollToPosition(buyAdapter.itemCount)
-        binding.nameProduct.requestFocus()
     }
 
-    private fun processNotExistProduct(
-        nameProduct: String,
-        amount: Int,
-        total: Int,
-        value: Int
-    ) {
-        productViewModel.currentProduct = ProductsBuyBinding(
-            name = nameProduct,
-            amount = amount,
-            total = total,
-            costItem = value,
-        )
-    }
-
-    private fun processExistProduct(
-        product: ProductsBuyBinding,
-        total: Int,
-        value: Int,
-        amount: Int
-    ) {
-        productViewModel.currentProduct.apply {
-            this.id = product.id
-            this.productBuyId = product.productBuyId
-            this.total = total
-            this.costItem = value
-            this.amount = amount
+    private fun clearAndResetForm() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            val editTexts = binding.formInputs.touchables.filterIsInstance<EditText>()
+            editTexts.forEach { editText ->
+                editText.text?.clear()
+            }
+            binding.recyclerViewOrders.smoothScrollToPosition(buyAdapter.itemCount)
+            binding.nameProduct.requestFocus()
         }
-        //saveProductToBuy()
-    }
-
-    private fun saveProductToBuy() {
-        viewModel.saveProductBuy(productViewModel.currentProduct)
-        productViewModel.currentProduct = ProductsBuyBinding()
     }
 
     private fun calculateAndShowPrice() {

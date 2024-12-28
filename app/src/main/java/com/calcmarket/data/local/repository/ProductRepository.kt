@@ -3,6 +3,7 @@ package com.calcmarket.data.local.repository
 import com.calcmarket.data.local.daos.ProductDAO
 import com.calcmarket.data.local.entities.ProductEntity
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class ProductRepository @Inject constructor(
@@ -11,7 +12,15 @@ class ProductRepository @Inject constructor(
 
     fun getProductByQuery(query: String) = productDAO.getProductsByName(query)
 
+    fun getAllProducts() = productDAO.getAllProducts()
+
     suspend fun getProductByName(name: String) = productDAO.getProductByName(name)
 
     fun saveProduct(productEntity: ProductEntity) = productDAO.saveProduct(productEntity)
+
+    fun saveProducts(productEntity: List<ProductEntity>): Flow<LongArray> {
+        return flow {
+            emit(productDAO.saveProducts(productEntity))
+        }
+    }
 }

@@ -12,15 +12,19 @@ class BuyUseCase @Inject constructor(
 ) {
     fun saveLocalBuy(buyEntity: BuyEntity) = repository.saveLocalBuy(buyEntity)
 
-    fun saveProductsByBuy(product: List<ProductsByBuyEntity>) = repository.saveProductsByBuy(product)
+    fun saveProductsByBuy(product: List<ProductsByBuyEntity>): Flow<LongArray> = repository.saveProductsByBuy(product)
 
     suspend fun checkBuyInProgress(): BuyEntity? = repository.checkBuyInProgress()
 
     suspend fun deleteBuyInProgress(idBuy: Int) = repository.deleteBuyInProgress(idBuy)
 
-    suspend fun updateCostAmountItemBuy(product: ProductsByBuyEntity) = repository.updateCostAmountItemBuy(product)
+    fun updateCostAmountItemBuy(product: ProductsByBuyEntity): Flow<Result<Boolean>> {
+        return repository.updateCostAmountItemBuy(product)
+    }
 
-    suspend fun deleteItemBuy(product: ProductsByBuyEntity) = repository.deleteItemBuy(product)
+    fun deleteItemBuy(product: ProductsByBuyEntity): Flow<Result<Boolean>> {
+        return repository.deleteItemBuy(product)
+    }
 
     fun getFullBuys(): Flow<List<BuyEntity>> = repository.getAllLocalBuy()
 

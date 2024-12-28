@@ -7,18 +7,18 @@ import android.widget.BaseAdapter
 import android.widget.Filter
 import android.widget.Filterable
 import com.calcmarket.databinding.LayoutAutoCompleteProductBinding
-import com.calcmarket.ui.binds.ProductsBuyBinding
+import com.calcmarket.ui.binds.ProductBinding
 import kotlin.collections.ArrayList
 
 class ProductAutoCompleteAdapter(
     private val clickClosure: () -> Unit
 ) : BaseAdapter(), Filterable {
 
-    private var items: MutableList<ProductsBuyBinding> = mutableListOf()
-    private var filteredItems: MutableList<ProductsBuyBinding> = mutableListOf()
+    private var items: MutableList<ProductBinding> = mutableListOf()
+    private var filteredItems: MutableList<ProductBinding> = mutableListOf()
     private val mFilter = AutoCompleteFilter()
 
-    fun updateItems(list: List<ProductsBuyBinding>) {
+    fun updateItems(list: List<ProductBinding>) {
         items.clear()
         items.addAll(list)
         filteredItems.clear()
@@ -30,11 +30,13 @@ class ProductAutoCompleteAdapter(
         val layoutInflater = LayoutInflater.from(parent?.context)
         val view = LayoutAutoCompleteProductBinding.inflate(layoutInflater, parent, false)
         val item = filteredItems[position]
-        view.nameProduct.text = buildString {
-            append(item.type)
-            append(" ")
-            append(item.name)
+
+        val nameProduct = when {
+            item.type.isNotEmpty() && item.name.isEmpty() -> item.type
+            item.name.isNotEmpty() && item.type.isEmpty() -> item.name
+            else -> "${item.type} - ${item.name}"
         }
+        view.nameProduct.text = nameProduct
         return view.root
     }
 
@@ -74,7 +76,7 @@ class ProductAutoCompleteAdapter(
 
         override fun publishResults(constraint: CharSequence?, result: FilterResults?) {
             result?.values?.let {
-                filteredItems = it as ArrayList<ProductsBuyBinding>
+                filteredItems = it as ArrayList<ProductBinding>
                 if (filteredItems.isEmpty()) {
                     clickClosure()
                     notifyDataSetInvalidated()

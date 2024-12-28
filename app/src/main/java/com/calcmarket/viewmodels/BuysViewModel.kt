@@ -1,22 +1,18 @@
 package com.calcmarket.viewmodels
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.calcmarket.R
 import com.calcmarket.core.PreferencesHelper
-import com.calcmarket.data.local.entities.BuyEntity
 import com.calcmarket.data.usecase.BuyUseCase
 import com.calcmarket.ui.binds.BuyBinding
-import com.calcmarket.ui.binds.ProductsBuyBinding
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
@@ -30,48 +26,10 @@ class BuysViewModel @Inject constructor(
     private val _fullBuysMutableLiveData = MutableLiveData<List<BuyBinding>>()
     val fullBuysMutableLiveData: LiveData<List<BuyBinding>> = _fullBuysMutableLiveData
 
-    private val _buySelectedMutableLiveData = MutableLiveData<BuyBinding?>()
-    val buySelectedLiveData: LiveData<BuyBinding?> = _buySelectedMutableLiveData
-
-    private val _productsByBuyLiveData = MediatorLiveData<List<ProductsBuyBinding>>().apply {
-        addSource(buySelectedLiveData) { myBuy ->
-            viewModelScope.launch {
-                myBuy?.let { buy ->
-                    buyUseCase.getProductsByBuy(buy.id).collect { products ->
-                        value =  products.map { it.toBinding() }
-                    }
-                }
-            }
-        }
-    }
-    val productsByBuyLiveData: LiveData<List<ProductsBuyBinding>> get() = _productsByBuyLiveData
-
     private val _lastLogin: MutableLiveData<String> = MutableLiveData(
         preferencesHelper.context.getString(R.string.las_login, formatDate(preferencesHelper.lastLogin))
     )
     val lastLogin: LiveData<String> = _lastLogin
-
-    fun buySelectedSet(buy: BuyBinding) {
-        _buySelectedMutableLiveData.value = buy
-    }
-
-    fun createNewBuy() {
-
-        viewModelScope.launch(Dispatchers.IO) {
-            val calendar = Calendar.getInstance()
-            val formatter = SimpleDateFormat("dd/MMM/yyyy hh:mm:ss", Locale.ROOT)
-            val nameBuy = "Compra del dia ${formatter.format(calendar.time)}"
-            val idBuy = calendar.timeInMillis.toInt()
-            buyUseCase.saveLocalBuy(
-                BuyEntity(id = idBuy, name = nameBuy, isInProgress = true)
-            )
-
-            withContext(Dispatchers.Main) {
-                _buySelectedMutableLiveData.value = BuyBinding(id = idBuy, name = nameBuy)
-            }
-        }
-
-    }
 
     fun checkBuyInProgress(onComplete: (BuyBinding?) -> Unit) {
         viewModelScope.launch {
@@ -87,47 +45,9 @@ class BuysViewModel @Inject constructor(
     fun getFullBuys() {
         viewModelScope.launch(Dispatchers.IO) {
             buyUseCase.getFullBuys().collect { list ->
-                _fullBuysMutableLiveData.postValue(list.map { it.toBinding() })
+                val listToBinding = list.map { it.toBinding() }
+                _fullBuysMutableLiveData.postValue(listToBinding)
             }
-        }
-    }
-
-    fun updateItemBuy(product: ProductsBuyBinding) {
-        viewModelScope.launch(Dispatchers.IO) {
-            buySelectedLiveData.value?.let {
-                buyUseCase.updateCostAmountItemBuy(
-                    product.toEntity(it.id)
-                )
-            }
-        }
-    }
-
-    fun deleteItemBuy(product: ProductsBuyBinding) {
-        viewModelScope.launch(Dispatchers.IO) {
-            buySelectedLiveData.value?.let {
-                buyUseCase.deleteItemBuy(
-                    product.toEntity(it.id)
-                )
-            }
-        }
-    }
-
-    fun updateItemsBuy(idBuy: Int, items: MutableList<ProductsBuyBinding>) {
-
-        viewModelScope.launch(Dispatchers.IO) {
-            buyUseCase.updateItemsAndCostItemsBuy(
-                idBuy = idBuy,
-                countItems = items.sumOf { it.amount },
-                total = items.sumOf { it.total }
-            )
-        }
-    }
-
-    fun saveProductBuy(product: ProductsBuyBinding) {
-        viewModelScope.launch(Dispatchers.IO) {
-            buyUseCase.saveProductsByBuy(
-                listOf(product.toEntity(buySelectedLiveData.value?.id ?: -1))
-            )
         }
     }
 
@@ -138,7 +58,6 @@ class BuysViewModel @Inject constructor(
                 onSuccess.invoke()
             }
         }
-        _buySelectedMutableLiveData.value = null
     }
 
     fun updateLastLogin() {
@@ -163,5 +82,7 @@ class BuysViewModel @Inject constructor(
 
         return "$dayOfWeek $day/$month/$year"
     }
+
+    //move this and create his own viewModel BuyInProgress or NewBuyViewModel
 
 }

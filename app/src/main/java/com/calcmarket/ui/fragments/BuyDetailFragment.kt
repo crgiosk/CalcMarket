@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.calcmarket.databinding.FragmentBuyDetailBinding
 import com.calcmarket.ui.adapter.ProductsByBuyAdapter
+import com.calcmarket.viewmodels.BuyDetailViewModel
 import com.calcmarket.viewmodels.BuysViewModel
 
 class BuyDetailFragment : Fragment() {
@@ -18,7 +19,7 @@ class BuyDetailFragment : Fragment() {
         FragmentBuyDetailBinding.inflate(layoutInflater, null, false)
     }
 
-    private val viewModel: BuysViewModel by activityViewModels()
+    private val viewModel: BuyDetailViewModel by activityViewModels()
 
     private val myAdapter: ProductsByBuyAdapter by lazy {
         ProductsByBuyAdapter()
@@ -36,10 +37,11 @@ class BuyDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupUI()
-        getProducts()
+        setObservers()
+        viewModel.checkBuyInProgress()
     }
 
-    private fun getProducts() {
+    private fun setObservers() {
 
         viewModel.productsByBuyLiveData.observe(viewLifecycleOwner) { products ->
             if (isAdded && isVisible) myAdapter.updateData(products)

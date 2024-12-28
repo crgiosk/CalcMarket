@@ -24,7 +24,6 @@ class AllBuysFragment : Fragment() {
 
     private val buyAdapter: BuysListAdapter by lazy {
         BuysListAdapter {
-            viewModel.buySelectedSet(it)
             findNavController().navigate(R.id.action_allBuysFragment_to_buyDetailFragment)
         }
     }
@@ -63,7 +62,6 @@ class AllBuysFragment : Fragment() {
                         titlePositiveButton = R.string.title_button_continue,
                         titleNegativeButton = R.string.title_button_delete,
                         onPositiveButton = {
-                            viewModel.buySelectedSet(it)
                             findNavController().navigate(R.id.action_allBuysFragment_to_newBuyFragment)
                         },
                         onNegativeButton = {
@@ -91,8 +89,9 @@ class AllBuysFragment : Fragment() {
 
     private fun setupObservers() {
         viewModel.fullBuysMutableLiveData.observe(viewLifecycleOwner) {
-            if (isVisible) {
+            try {
                 buyAdapter.submitList(it)
+            } catch (_: Exception) {
             }
         }
     }

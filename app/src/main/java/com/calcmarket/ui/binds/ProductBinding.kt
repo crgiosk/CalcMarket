@@ -1,9 +1,10 @@
 package com.calcmarket.ui.binds
 
+import com.calcmarket.data.local.entities.ProductEntity
 import com.calcmarket.data.network.dto.ProductsFRBDTO
 
 data class ProductBinding(
-    var id: String = "",
+    var id: Int = 0,
     val name: String = "",
     var costItem: Int = 0,
     val isFavorite: Boolean = false,
@@ -32,10 +33,21 @@ data class ProductBinding(
     fun toProductsBuyBinding(): ProductsBuyBinding {
         return ProductsBuyBinding(
             name = name,
+            productId = id,
             costItem = costItem,
             isFavorite = isFavorite,
             type = type,
             measure = measure
+        )
+    }
+
+    fun toEntity(): ProductEntity {
+        return ProductEntity(
+            name = name,
+            type = type,
+            measure = measure,
+            costProduct = costItem,
+            isFavorite = isFavorite
         )
     }
 }

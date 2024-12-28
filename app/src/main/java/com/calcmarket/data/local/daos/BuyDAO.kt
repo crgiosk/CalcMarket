@@ -21,8 +21,8 @@ interface BuyDAO {
     @Query("SELECT * FROM buy")
     fun getAllLocalBuy(): Flow<List<BuyEntity>>
 
-    @Insert
-    fun saveProducts(products: List<ProductsByBuyEntity>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveProducts(products: List<ProductsByBuyEntity>): LongArray
 
     @Query("SELECT prod.*, p.products_by_buy_amount, p.products_by_buy_total, " +
             "p.products_by_buy_id as productBuyId " +
@@ -50,9 +50,12 @@ interface BuyDAO {
     @Query("UPDATE buy SET buy_items = :countItems, buy_total = :total WHERE buy_id = :idBuy")
     suspend fun updateItemsAndCostItemsBuy(idBuy: Int, countItems: Int, total: Int): Int
 
+    @Query("SELECT SUM(products_by_buy_amount) as total_amount, SUM(products_by_buy_total) total  FROM products_by_buy WHERE fk_buy_id = :idBuy ")
+    suspend fun getDetailBuy(idBuy: Int)
+
     @Update
-    suspend fun updateCostAmountItemBuy(product: ProductsByBuyEntity)
+    suspend fun updateCostAmountItemBuy(product: ProductsByBuyEntity): Int
 
     @Delete
-    suspend fun deleteItemBuy(product: ProductsByBuyEntity)
+    suspend fun deleteItemBuy(product: ProductsByBuyEntity): Int
 }

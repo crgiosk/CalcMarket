@@ -8,13 +8,20 @@ import com.calcmarket.core.BaseViewHolder
 import com.calcmarket.core.Extensions
 import com.calcmarket.databinding.ItemProductBinding
 import com.calcmarket.ui.binds.ProductsBuyBinding
+import java.util.Locale
 
 private object ProductDiffCallback : DiffUtil.ItemCallback<ProductsBuyBinding>() {
-    override fun areItemsTheSame(oldItem: ProductsBuyBinding, newItem: ProductsBuyBinding): Boolean {
+    override fun areItemsTheSame(
+        oldItem: ProductsBuyBinding,
+        newItem: ProductsBuyBinding
+    ): Boolean {
         return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: ProductsBuyBinding, newItem: ProductsBuyBinding): Boolean {
+    override fun areContentsTheSame(
+        oldItem: ProductsBuyBinding,
+        newItem: ProductsBuyBinding
+    ): Boolean {
         return oldItem == newItem
     }
 }
@@ -33,12 +40,19 @@ class BuyAdapter(
         holder.bind(getItem(position))
     }
 
-    inner class ViewHolder(private val binding: ItemProductBinding) : BaseViewHolder<ProductsBuyBinding>(binding.root) {
+    inner class ViewHolder(private val binding: ItemProductBinding) :
+        BaseViewHolder<ProductsBuyBinding>(binding.root) {
 
         override fun bind(model: ProductsBuyBinding) {
 
-            binding.nameProduct.setText(model.name)
-            binding.amountEditText.text = model.amount.toString()
+            val nameProduct = when {
+                model.type.isNotEmpty() && model.name.isEmpty() -> model.type
+                model.name.isNotEmpty() && model.type.isEmpty() -> model.name
+                else -> "${model.type} - ${model.name}"
+            }
+
+            binding.nameProduct.setText(nameProduct)
+            binding.amountEditText.text = String.format(Locale.ROOT, model.amount.toString())
             binding.valueEditText.setText(Extensions.buildCoinFormat(model.costItem))
             binding.totalEditText.setText(Extensions.buildCoinFormat(model.total))
 

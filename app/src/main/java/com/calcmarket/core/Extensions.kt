@@ -54,10 +54,12 @@ object Extensions {
         return format.format(number)
     }
 
-    fun removeCoinSymbol(value: String): String =
-        value.replace("$", "")
+    fun removeCoinSymbol(value: String?): String {
+        return value.orEmpty()
+            .replace("$", "")
             .replace(".", "")
             .replace(",", "")
+    }
 
     fun <T> basicDiffUtil(
         initialValue: MutableList<T> = mutableListOf(),
